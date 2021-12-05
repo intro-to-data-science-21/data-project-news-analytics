@@ -8,5 +8,3 @@ if (length(p_to_install) > 0) {
   install.packages(p_to_install)
 }
 lapply(p_needed, require, character.only = TRUE)
-
-# hifddsds
