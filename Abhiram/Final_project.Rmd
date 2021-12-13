@@ -190,7 +190,15 @@ View(ase)
 
 ```
 
-##Shiny dashboard 1
+##Shiny dashboard 1 : running this code chunk will get you the bar graphs basic version
+
+
+
+##Tutorials which i got this stuff from :  1. https://github.com/anastasia-lucas/rladies_shinydashboards (same one on youtube : https://www.youtube.com/watch?v=wSYt4IYIsdI&t=3225s)
+
+## 2. https://github.com/intro-to-data-science-21/labs/tree/main/session-10-shiny/our_app
+
+
 
 ```{r pressure, echo=FALSE}
 
@@ -243,7 +251,7 @@ server <- function(input, output) {
 shinyApp(ui, server)
 ```
 
-##Shiny dashboard 2
+##Shiny dashboard 2 : running this chunk will get you an advanced bar graph version
 
 
 
