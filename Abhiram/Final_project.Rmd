@@ -76,66 +76,6 @@ df_2 = subset(headlines_2021_12_08_19_20_08_CET,select = -c (...1))
 
 a <- bind_rows(df_1, df_2,df_3,df_4,df_5,df_6,df_7)
 
-
-# first_day <- bind_rows(df_1, df_2,df_3)
-# second_day <- bind_rows(df_4,df_5,df_6,df_7)
-# 
-# text_firstday <-first_day$value
-# text_secondday <- second_day$value
-# 
-# 
-# # Set the text to lowercase
-# text_firstday <- tolower(text_firstday)
-# # Remove mentions, urls, emojis, numbers, punctuations, etc.
-# text_firstday <- gsub("@\\w+", "", text_firstday)
-# text_firstday <- gsub("https?://.+", "", text_firstday)
-# text_firstday <- gsub("\\d+\\w*\\d*", "", text_firstday)
-# text_firstday <- gsub("#\\w+", "", text_firstday)
-# text_firstday <- gsub("[^\x01-\x7F]", "", text_firstday)
-# text_firstday <- gsub("[[:punct:]]", " ", text_firstday)
-# # Remove spaces and newlines
-# text_firstday <- gsub("\n", " ", text_firstday)
-# text_firstday <- gsub("^\\s+", "",text_firstday)
-# text_firstday <- gsub("\\s+$", "", text_first_day)
-# text_firstday <- gsub("[ |\t]+", " ", text_firstday)
-# # Put the data to a new column
-# first_day["fix_text"] <- text_firstday
-# head(first_day$fix_text, 10)
-# 
-# 
-# Frequent_words_firstday <- first_day %>%
-#   unnest_tokens(output = word, input = fix_text) %>%
-#   anti_join(stop_words, by = "word") %>%
-#   count(word,sort = TRUE)
-# 
-# # Set the text to lowercase
-# text_secondday <- tolower(text_secondday)
-# # Remove mentions, urls, emojis, numbers, punctuations, etc.
-# text_secondday <- gsub("@\\w+", "", text_secondday)
-# text_secondday <- gsub("https?://.+", "", text_secondday)
-# text_secondday <- gsub("\\d+\\w*\\d*", "", text_secondday)
-# text_secondday <- gsub("#\\w+", "", text_secondday)
-# text_secondday <- gsub("[^\x01-\x7F]", "", text_secondday)
-# text_secondday <- gsub("[[:punct:]]", " ", text_secondday)
-# # Remove spaces and newlines
-# text_secondday <- gsub("\n", " ", text_secondday)
-# text_secondday <- gsub("^\\s+", "",text_secondday)
-# text_secondday <- gsub("\\s+$", "", text_secondday)
-# text_secondday <- gsub("[ |\t]+", " ", text_secondday)
-# # Put the data to a new column
-# second_day["fix_text"] <- text_secondday
-# head(second_day$fix_text, 10)
-# 
-# 
-# Frequent_words_secondday <- second_day %>%
-#   unnest_tokens(output = word, input = fix_text) %>%
-#   anti_join(stop_words, by = "word") %>%
-#   count(word,sort = TRUE)
-# 
-# 
-# View(Frequent_words_secondday)
-# 
-
 text <- a$value
 
 View(text)
@@ -165,8 +105,6 @@ View(a)
 
 a$times <- as.Date(a$time, "%d%b%Y:%H:%M:%S")
 
-
-
 library(dplyr)
 
 library(tidytext)
@@ -179,37 +117,37 @@ Frequent_words <- a %>%
 
 View(Frequent_words)
 
-Top_5_total <- Frequent_words[1:5,]
-
-Top_5_firstday <- Frequent_words_firstday[1:5,]
-
-Top_5_secondday <- Frequent_words_secondday[1:5,]
-
-
-Top_5_firstday["Days"] <- "Day One"
-Top_5_secondday["Days"] <- "Day Two"
-
-Top_5_fortwodays <- bind_rows(Top_5_firstday,Top_5_secondday)
-
-christmas <-  Top_5_fortwodays %>% filter(word =="christmas")
-covid <-Top_5_fortwodays %>% filter(word =="covid")
-party <-Top_5_fortwodays %>% filter(word =="party")
-home <-Top_5_fortwodays %>% filter(word =="home")
-
-
-Top_5_fortwodays$Days <- factor(Top_5_fortwodays$Days, levels = data[["Days"]])
-
-fig_words <- plot_ly(data, x = ~christmas$Days, y = ~christmas$n, name = 'christmas', type = 'scatter', mode = 'lines') 
-
-
-
-fig_words <- fig_words %>% add_trace(y = ~covid$n, name = 'covid', line = list(color = 'rgb(22, 96, 167)', width = 4)) 
-fig_words <- fig_words %>% add_trace(y = ~party$n, name = 'party', line = list(color = 'rgb(205, 12, 24)', width = 4, dash = 'dash')) 
-fig_words <- fig_words %>% add_trace(y = ~home$n, name = 'home', line = list(color = 'rgb(22, 96, 167)', width = 4, dash = 'dash')) 
-
-fig_words <- fig_words %>% layout(title = "Common words for the two days",
-                      xaxis = list(title = "Days"),
-                      yaxis = list (title = "Words"))
+# Top_5_total <- Frequent_words[1:5,]
+# 
+# Top_5_firstday <- Frequent_words_firstday[1:5,]
+# 
+# Top_5_secondday <- Frequent_words_secondday[1:5,]
+# 
+# 
+# Top_5_firstday["Days"] <- "Day One"
+# Top_5_secondday["Days"] <- "Day Two"
+# 
+# Top_5_fortwodays <- bind_rows(Top_5_firstday,Top_5_secondday)
+# 
+# christmas <-  Top_5_fortwodays %>% filter(word =="christmas")
+# covid <-Top_5_fortwodays %>% filter(word =="covid")
+# party <-Top_5_fortwodays %>% filter(word =="party")
+# home <-Top_5_fortwodays %>% filter(word =="home")
+# 
+# 
+# Top_5_fortwodays$Days <- factor(Top_5_fortwodays$Days, levels = data[["Days"]])
+# 
+# fig_words <- plot_ly(data, x = ~christmas$Days, y = ~christmas$n, name = 'christmas', type = 'scatter', mode = 'lines') 
+# 
+# 
+# 
+# fig_words <- fig_words %>% add_trace(y = ~covid$n, name = 'covid', line = list(color = 'rgb(22, 96, 167)', width = 4)) 
+# fig_words <- fig_words %>% add_trace(y = ~party$n, name = 'party', line = list(color = 'rgb(205, 12, 24)', width = 4, dash = 'dash')) 
+# fig_words <- fig_words %>% add_trace(y = ~home$n, name = 'home', line = list(color = 'rgb(22, 96, 167)', width = 4, dash = 'dash')) 
+# 
+# fig_words <- fig_words %>% layout(title = "Common words for the two days",
+#                       xaxis = list(title = "Days"),
+#                       yaxis = list (title = "Words"))
 
 
 
@@ -252,11 +190,14 @@ View(ase)
 
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
+##Shiny dashboard 1
 
 ```{r pressure, echo=FALSE}
+
+library(shiny)
+library(shinydashboard)
+
+
 ui <- dashboardPage(
   dashboardHeader(title = "Most occuring words"),
   dashboardSidebar(),
@@ -302,7 +243,7 @@ server <- function(input, output) {
 shinyApp(ui, server)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+##Shiny dashboard 2
 
 
 
@@ -391,6 +332,11 @@ shinyApp(ui, server)
 
 
 ```
+
+
+
+##Shiny dashboard 3 : The main one which we have to figure out.
+
 
 ```{r}
 
