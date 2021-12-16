@@ -75,9 +75,15 @@ headlines <- headlines %>% # maximum of 5500 headlines to avoid distortion, esce
                                     name == "advertiser" ~ "tabloid",
                                     name == "torontosun" ~ "tabloid",
                                     name == "nzherald" ~ "tabloid",
-                                    TRUE ~ "broadsheet"))
-
-  
+                                    TRUE ~ "broadsheet"),
+         
+         day = dplyr::case_when(grepl("2021-12-09", time) ~ "09-12",
+                                grepl("2021-12-10", time) ~ "10-12",
+                                grepl("2021-12-11", time) ~ "11-12",
+                                grepl("2021-12-12", time) ~ "12-12",
+                                grepl("2021-12-13", time) ~ "13-12",
+                                grepl("2021-12-14", time) ~ "14-12",
+                                grepl("2021-12-15", time) ~ "15-12"))
 
                                                
 # tokenizing --------------------------------------------------------------
@@ -107,7 +113,7 @@ gen_plot %>%
 
 
 ## here its going down
-
+ds
 
 
 
