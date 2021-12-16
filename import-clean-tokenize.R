@@ -37,9 +37,6 @@ clean_data <- function(x) { # x = path
 headlines <- clean_data(headlines)
 
 headlines <- headlines %>% # maximum of 5500 headlines to avoid distortion, escecially of uk newspaper dailymail
-  group_by(name) %>% 
-  slice(1:5500) %>%  # change this number when importing last datasets!!
-  ungroup() %>% 
   mutate(country = dplyr::case_when(name == "guardian" ~ "UK",
                                     name == "times" ~ "UK",
                                     name == "dailymail" ~ "UK",
@@ -72,29 +69,28 @@ headlines <- headlines %>% # maximum of 5500 headlines to avoid distortion, esce
                                     name == "thepress" ~ "New-Zealand"),
          
           format = dplyr::case_when(name == "dailymail" ~ "tabloid",
-                                    name == )
-m
+                                    name == "mirror" ~ "tabloid",
+                                    name == "couriermail" ~ "tabloid",
+                                    name == "westaustralian" ~ "tabloid",
+                                    name == "advertiser" ~ "tabloid",
+                                    name == "torontosun" ~ "tabloid",
+                                    name == "nzherald" ~ "tabloid",
+                                    TRUE ~ "broadsheet"))
+
   
 
-tabloid
-- dailymail
-- mirror
-- couriermail
-- west-australian
-- advertiser
-- toronto
-- new zealand herald
                                                
 # tokenizing --------------------------------------------------------------
 
 headlines_tok <- headlines %>% 
   unnest_tokens(output = word, input = headline) %>% 
-  anti_join(stop_words) 
+  anti_join(stop_words) %>% 
+  count(word,sort = TRUE)
 
 # clean -------------------------------------------------------------------
 
 headlines_tok <- headlines_tok %>% 
-  filter(!grepl('content|subscriber|read|star|10|9|min|l.a|wa|nz|canada|uk|west', word))  # dailymail uses the word star everywhore
+  filter(!grepl('content|subscriber|read|star|10|9|6|min|l.a|wa|nz|canada|uk|west|tampa|times', word))  # dailymail uses the word star everywhore
 
 
 # test graph --------------------------------------------------------------
@@ -109,6 +105,9 @@ gen_plot %>%
   coord_flip()
 
 
-lol <- headlines_sliced %>% 
-  group_by(name) %>% 
-  count()
+
+## here its going down
+
+
+
+
