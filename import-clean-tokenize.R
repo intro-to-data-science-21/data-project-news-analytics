@@ -77,21 +77,23 @@ headlines <- headlines %>% # maximum of 5500 headlines to avoid distortion, esce
                                     name == "nzherald" ~ "tabloid",
                                     TRUE ~ "broadsheet"),
          
-         day = dplyr::case_when(grepl("2021-12-09", time) ~ "09-12",
-                                grepl("2021-12-10", time) ~ "10-12",
-                                grepl("2021-12-11", time) ~ "11-12",
-                                grepl("2021-12-12", time) ~ "12-12",
-                                grepl("2021-12-13", time) ~ "13-12",
-                                grepl("2021-12-14", time) ~ "14-12",
-                                grepl("2021-12-15", time) ~ "15-12"))
+         day = dplyr::case_when(grepl("2021-12-09", time) ~ "December 9",
+                                grepl("2021-12-10", time) ~ "December 10",
+                                grepl("2021-12-11", time) ~ "December 11",
+                                grepl("2021-12-12", time) ~ "December 12",
+                                grepl("2021-12-13", time) ~ "December 13",
+                                grepl("2021-12-14", time) ~ "December 14",
+                                grepl("2021-12-15", time) ~ "December 15",
+                                grepl("2021-12-16", time) ~ "December 16"))
 
                                                
 # tokenizing --------------------------------------------------------------
 
 headlines_tok <- headlines %>% 
   unnest_tokens(output = word, input = headline) %>% 
-  anti_join(stop_words) %>% 
-  count(word,sort = TRUE)
+  anti_join(stop_words) 
+
+View(headlines_tok)
 
 # clean -------------------------------------------------------------------
 
