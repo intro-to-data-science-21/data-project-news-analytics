@@ -1,0 +1,402 @@
+---
+title: "Untitled"
+author: "Koen Oosthoek"
+date: "12/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+## R Markdown
+
+library(tidyverse)
+library(fs)
+library(tidytext)
+library(fs)
+library(plotly)
+
+
+```
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+# importing csv files -----------------------------------------------------
+file_paths <- fs::dir_ls("data")
+file_paths
+
+file_contents <- list()
+
+for (i in seq_along(file_paths)) {
+  file_contents[[i]] <- read_csv(
+    file = file_paths[[i]]
+  )
+}
+
+file_contents <- set_names(file_contents, file_paths)
+
+headlines <- do.call(rbind, file_contents)
+```
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+# cleaning with function - before tokenizing! --------------------------------------------------
+
+clean_data <- function(x) { # x = path
+  df <- x
+  df$time <- as.POSIXct(df$time) %>% as.character() %>% str_replace_all("[ :]", "-")
+  df <- select(df, -"...1")
+  df$value <- gsub("<.*?>", "", df$value) # remove html tages
+  df$value <- gsub(' +',' ', df$value) # remove more than one space
+  df$value <- str_trim(df$value, side = c("both", "left", "right")) # remove spaces at start and end
+  df[df == ""] <- NA #adding NAs to blank cells
+  df <- na.omit(df) # remove NAs
+  df <- rename(df, headline = value)
+}
+
+headlines <- clean_data(headlines)
+```
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+headlines <- headlines %>% # maximum of 5500 headlines to avoid distortion, escecially of uk newspaper dailymail
+  mutate(country = dplyr::case_when(name == "guardian" ~ "UK",
+                                    name == "times" ~ "UK",
+                                    name == "dailymail" ~ "UK",
+                                    name == "independent" ~ "UK",
+                                    name == "mirror" ~ "UK",
+                                    name == "telegraph" ~ "UK",
+                                    name == "nytimes" ~ "US",
+                                    name == "wsj" ~ "US",
+                                    name == "usatoday" ~ "US",
+                                    name == "washingtonpost" ~ "US",
+                                    name == "latimes" ~ "US",
+                                    name == "tampabay" ~ "US",
+                                    name == "heraldsun" ~ "Australia",
+                                    name == "dailytelegraph" ~ "Australia",
+                                    name == "financialreview" ~ "Australia",
+                                    name == "couriermail" ~ "Australia",
+                                    name == "westaustralian" ~ "Australia",
+                                    name == "advertiser" ~ "Australia",
+                                    name == "globeandmail" ~ "Canada",
+                                    name == "thestar" ~ "Canada",
+                                    name == "nationalpost" ~ "Canada",
+                                    name == "torontosun" ~ "Canada",
+                                    name == "vancouversun" ~ "Canada",
+                                    name == "montrealgazette" ~ "Canada",
+                                    name == "nzherald" ~ "New-Zealand",
+                                    name == "waikato" ~ "New-Zealand",
+                                    name == "businessreview" ~ "New-Zealand",
+                                    name == "gisborneherald" ~ "New-Zealand",
+                                    name == "dominionpost" ~ "New-Zealand",
+                                    name == "thepress" ~ "New-Zealand"),
+         
+          format = dplyr::case_when(name == "dailymail" ~ "tabloid",
+                                    name == "mirror" ~ "tabloid",
+                                    name == "couriermail" ~ "tabloid",
+                                    name == "westaustralian" ~ "tabloid",
+                                    name == "advertiser" ~ "tabloid",
+                                    name == "torontosun" ~ "tabloid",
+                                    name == "nzherald" ~ "tabloid",
+                                    TRUE ~ "broadsheet"),
+         
+         day = dplyr::case_when(grepl("2021-12-09", time) ~ "December 9",
+                                grepl("2021-12-10", time) ~ "December 10",
+                                grepl("2021-12-11", time) ~ "December 11",
+                                grepl("2021-12-12", time) ~ "December 12",
+                                grepl("2021-12-13", time) ~ "December 13",
+                                grepl("2021-12-14", time) ~ "December 14",
+                                grepl("2021-12-15", time) ~ "December 15",
+                                grepl("2021-12-16", time) ~ "December 16"))
+
+```
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+# ensuring balance --------------------------------------------------------
+
+
+
+headlines_2 <- headlines %>% 
+  group_by(name) %>% 
+  slice(1:5000)
+
+                                               
+# tokenizing --------------------------------------------------------------
+
+headlines_tok <- headlines %>% 
+  unnest_tokens(output = word, input = headline) %>% 
+  anti_join(stop_words) 
+
+
+# clean -------------------------------------------------------------------
+
+headlines_tok <- headlines_tok %>% 
+  filter(!grepl('content|subscriber|read|star|10|9|6|min|l.a|wa|nz|canada|uk|west|tampa|times', word))  # dailymail uses the word star everywhore
+```
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+## first graph: all newspapers in all countries
+
+first_graph_data <- headlines_tok %>% 
+  group_by(time, word) %>% 
+  count(word, sort = TRUE, name = "n") 
+
+first_graph_all <- first_graph_data %>% 
+  filter(word == "christmas" | word == "covid" | word == "omicron" | word == "2021" | word == "home" |
+         word == "party" | word == "f1" | word == "city" | word == "life" | word == "sex") %>% 
+  ggplot(aes(x = time, y = n, group = word, colour = word)) +
+  geom_line() +
+  labs(title = "The frequency of the 10 most used deadlines, all newspapers") +
+  ylab("Frequency") +
+  xlab("Date") +
+  scale_x_discrete(labels = c("2021-12-09-00-01-58"="Dec\n 9",  "2021-12-09-04-01-37"= "", "2021-12-09-08-01-21"= "", "2021-12-09-12-01-27"= "", "2021-12-09-16-01-24" = "", "2021-12-09-20-01-54" = "",
+                              "2021-12-10-00-01-51"="Dec\n 10", "2021-12-10-04-01-37"= "", "2021-12-10-08-01-15"= "", "2021-12-10-12-01-29"= "", "2021-12-10-16-02-11" = "", "2021-12-10-20-01-28" = "", 
+                              "2021-12-11-00-01-39"="Dec\n 11", "2021-12-11-04-01-51"= "", "2021-12-11-08-01-28"= "", "2021-12-11-12-01-32"= "", "2021-12-11-16-02-28" = "", "2021-12-11-20-01-38" = "",
+                              "2021-12-12-00-01-28"="Dec\n 12", "2021-12-12-04-01-25"= "", "2021-12-12-08-01-14"= "", "2021-12-12-12-01-26"= "", "2021-12-12-16-01-27" = "", "2021-12-12-20-01-45" = "",
+                              "2021-12-13-00-01-47"="Dec\n 13", "2021-12-13-04-01-19"= "", "2021-12-13-08-01-22"= "", "2021-12-13-12-01-25"= "", "2021-12-13-16-01-32" = "", "2021-12-13-20-01-28" = "",
+                              "2021-12-14-00-02-06"="Dec\n 14", "2021-12-14-04-01-58"= "", "2021-12-14-08-01-30"= "", "2021-12-14-12-01-57"= "", "2021-12-14-16-02-10" = "", "2021-12-14-20-01-33" = "",
+                              "2021-12-15-00-01-35"="Dec\n 15", "2021-12-15-04-01-28"= "", "2021-12-15-08-01-29"= "", "2021-12-15-12-01-34"= "", "2021-12-15-16-01-52" = "", "2021-12-15-20-01-35" = "")) +
+  theme(axis.ticks = element_blank()) +
+  theme_minimal()
+                              
+
+```
+   
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+## second graph: all newspapers in the US 
+
+second_graph_us_data <- headlines_tok %>% 
+  group_by(time, word) %>%
+  filter(country == "US") %>% 
+  count(word, sort = TRUE, name = "n") %>% 
+  ungroup()
+
+test <- second_graph_us_data %>% 
+  group_by(word) %>% 
+  arrange(desc(time)) %>% 
+  ungroup() %>% 
+  group_by(time) %>% 
+  slice(1:10)
+
+  
+second_graph_us <- second_graph_us_data %>% 
+  filter(word == "covid" | word == "biden" | word == "omicron" | word == "house" | word == "holiday" |
+           word == "california" | word == "tornadoes" | word == "court" | word == "inflation" | word == "abortion") %>% 
+  ggplot(aes(x = time, y = n, group = word, colour = word)) +
+  geom_line() +
+  geom_point(size = 0.4) +
+  labs(title = "The frequency of the 10 most used deadlines, us newspapers") +
+  ylab("Frequency") +
+  xlab("Date") +
+  scale_x_discrete(labels = c("2021-12-09-00-01-58"="Dec\n 9",  "2021-12-09-04-01-37"= "", "2021-12-09-08-01-21"= "", "2021-12-09-12-01-27"= "", "2021-12-09-16-01-24" = "", "2021-12-09-20-01-54" = "",
+                              "2021-12-10-00-01-51"="Dec\n 10", "2021-12-10-04-01-37"= "", "2021-12-10-08-01-15"= "", "2021-12-10-12-01-29"= "", "2021-12-10-16-02-11" = "", "2021-12-10-20-01-28" = "", 
+                              "2021-12-11-00-01-39"="Dec\n 11", "2021-12-11-04-01-51"= "", "2021-12-11-08-01-28"= "", "2021-12-11-12-01-32"= "", "2021-12-11-16-02-28" = "", "2021-12-11-20-01-38" = "",
+                              "2021-12-12-00-01-28"="Dec\n 12", "2021-12-12-04-01-25"= "", "2021-12-12-08-01-14"= "", "2021-12-12-12-01-26"= "", "2021-12-12-16-01-27" = "", "2021-12-12-20-01-45" = "",
+                              "2021-12-13-00-01-47"="Dec\n 13", "2021-12-13-04-01-19"= "", "2021-12-13-08-01-22"= "", "2021-12-13-12-01-25"= "", "2021-12-13-16-01-32" = "", "2021-12-13-20-01-28" = "",
+                              "2021-12-14-00-02-06"="Dec\n 14", "2021-12-14-04-01-58"= "", "2021-12-14-08-01-30"= "", "2021-12-14-12-01-57"= "", "2021-12-14-16-02-10" = "", "2021-12-14-20-01-33" = "",
+                              "2021-12-15-00-01-35"="Dec\n 15", "2021-12-15-04-01-28"= "", "2021-12-15-08-01-29"= "", "2021-12-15-12-01-34"= "", "2021-12-15-16-01-52" = "", "2021-12-15-20-01-35" = "")) +
+  theme(axis.ticks = element_blank()) +
+  theme_minimal() +
+  scale_color_brewer(palette = "Set3")
+
+          
+```
+
+
+Here we show our third graph. We can see that...
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+## third graph: all newspapers in the UK
+                       
+third_graph_uk_data <- headlines_tok %>% 
+  group_by(time, word) %>%
+  filter(country == "UK") %>% 
+  count(word, sort = TRUE, name = "n") %>% 
+  ungroup()
+
+test <- third_graph_uk_data %>% 
+  group_by(word) %>% 
+  arrange(desc(time)) %>% 
+  ungroup() %>% 
+  group_by(time) %>% 
+  slice(1:10)
+
+third_graph_uk <- third_graph_uk_data %>% 
+  filter(word == "christmas" | word == "covid" | word == "party" | word == "boris" | word == "johnson" |
+           word == "omicron" | word == "black" | word == "son" | word == "sex" | word == "home" |
+           word == "love" | word == "daughter" | word == "verstappen" | word == "lewis" | word == "booster") %>% 
+  ggplot(aes(x = time, y = n, group = word, colour = word)) +
+  geom_line() +
+  geom_point(size = 0.4) +
+  labs(title = "The frequency of the 10 most used deadlines, us newspapers") +
+  ylab("Frequency") +
+  xlab("Date") +
+  scale_x_discrete(labels = c("2021-12-09-00-01-58"="Dec\n 9",  "2021-12-09-04-01-37"= "", "2021-12-09-08-01-21"= "", "2021-12-09-12-01-27"= "", "2021-12-09-16-01-24" = "", "2021-12-09-20-01-54" = "",
+                              "2021-12-10-00-01-51"="Dec\n 10", "2021-12-10-04-01-37"= "", "2021-12-10-08-01-15"= "", "2021-12-10-12-01-29"= "", "2021-12-10-16-02-11" = "", "2021-12-10-20-01-28" = "", 
+                              "2021-12-11-00-01-39"="Dec\n 11", "2021-12-11-04-01-51"= "", "2021-12-11-08-01-28"= "", "2021-12-11-12-01-32"= "", "2021-12-11-16-02-28" = "", "2021-12-11-20-01-38" = "",
+                              "2021-12-12-00-01-28"="Dec\n 12", "2021-12-12-04-01-25"= "", "2021-12-12-08-01-14"= "", "2021-12-12-12-01-26"= "", "2021-12-12-16-01-27" = "", "2021-12-12-20-01-45" = "",
+                              "2021-12-13-00-01-47"="Dec\n 13", "2021-12-13-04-01-19"= "", "2021-12-13-08-01-22"= "", "2021-12-13-12-01-25"= "", "2021-12-13-16-01-32" = "", "2021-12-13-20-01-28" = "",
+                              "2021-12-14-00-02-06"="Dec\n 14", "2021-12-14-04-01-58"= "", "2021-12-14-08-01-30"= "", "2021-12-14-12-01-57"= "", "2021-12-14-16-02-10" = "", "2021-12-14-20-01-33" = "",
+                              "2021-12-15-00-01-35"="Dec\n 15", "2021-12-15-04-01-28"= "", "2021-12-15-08-01-29"= "", "2021-12-15-12-01-34"= "", "2021-12-15-16-01-52" = "", "2021-12-15-20-01-35" = "")) +
+  theme(axis.ticks = element_blank()) +
+  theme_minimal()
+
+   
+```
+
+Here we show our fourth graph. We can see that...
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+fourth_graph_canada_data <- headlines_tok %>% 
+  group_by(time, word) %>%
+  filter(country == "Canada") %>% 
+  count(word, sort = TRUE, name = "n") %>% 
+  ungroup()
+
+test <- fourth_graph_canada_data %>% 
+  group_by(word) %>% 
+  arrange(desc(time)) %>% 
+  ungroup() %>% 
+  group_by(time) %>% 
+  slice(1:10)
+
+fourth_graph_canada <- fourth_graph_canada_data %>% 
+  filter(word == "covid" | word == "million" | word == "car" | word == "boycott" | word == "document" |
+           word == "school" | word == "bill" | word == "study" | word == "weed" | word == "electric" |
+           word == "holiday" | word == "health" | word == "omicron" | word == "vaccine" | word == "dies" |
+           word == "change" | word == "pandemic" | word == "fiscal" | word == "policy" | word == "inflation") %>% 
+  ggplot(aes(x = time, y = n, group = word, colour = word)) +
+  geom_line() +
+  geom_point(size = 0.4) +
+  labs(title = "The frequency of the 10 most used deadlines, Canadian newspapers") +
+  ylab("Frequency") +
+  xlab("Date") +
+  scale_x_discrete(labels = c("2021-12-09-00-01-58"="Dec\n 9",  "2021-12-09-04-01-37"= "", "2021-12-09-08-01-21"= "", "2021-12-09-12-01-27"= "", "2021-12-09-16-01-24" = "", "2021-12-09-20-01-54" = "",
+                              "2021-12-10-00-01-51"="Dec\n 10", "2021-12-10-04-01-37"= "", "2021-12-10-08-01-15"= "", "2021-12-10-12-01-29"= "", "2021-12-10-16-02-11" = "", "2021-12-10-20-01-28" = "", 
+                              "2021-12-11-00-01-39"="Dec\n 11", "2021-12-11-04-01-51"= "", "2021-12-11-08-01-28"= "", "2021-12-11-12-01-32"= "", "2021-12-11-16-02-28" = "", "2021-12-11-20-01-38" = "",
+                              "2021-12-12-00-01-28"="Dec\n 12", "2021-12-12-04-01-25"= "", "2021-12-12-08-01-14"= "", "2021-12-12-12-01-26"= "", "2021-12-12-16-01-27" = "", "2021-12-12-20-01-45" = "",
+                              "2021-12-13-00-01-47"="Dec\n 13", "2021-12-13-04-01-19"= "", "2021-12-13-08-01-22"= "", "2021-12-13-12-01-25"= "", "2021-12-13-16-01-32" = "", "2021-12-13-20-01-28" = "",
+                              "2021-12-14-00-02-06"="Dec\n 14", "2021-12-14-04-01-58"= "", "2021-12-14-08-01-30"= "", "2021-12-14-12-01-57"= "", "2021-12-14-16-02-10" = "", "2021-12-14-20-01-33" = "",
+                              "2021-12-15-00-01-35"="Dec\n 15", "2021-12-15-04-01-28"= "", "2021-12-15-08-01-29"= "", "2021-12-15-12-01-34"= "", "2021-12-15-16-01-52" = "", "2021-12-15-20-01-35" = "")) +
+  theme(axis.ticks = element_blank()) +
+  theme_minimal()
+
+```
+
+Here we show our fifth graph. We can see that...
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+## fifth graph: all newspapers in Australia
+
+fifth_graph_australia_data <- headlines_tok %>% 
+  group_by(time, word) %>%
+  filter(country == "Australia") %>% 
+  count(word, sort = TRUE, name = "n") %>% 
+  ungroup()
+
+test <- fifth_graph_australia_data %>% 
+  group_by(word) %>% 
+  arrange(desc(time)) %>% 
+  ungroup() %>% 
+  group_by(time) %>% 
+  slice(1:10)
+
+fifth_graph_australia <- fifth_graph_australia_data %>% 
+  filter(word == "covid" | word == "ashes" | word == "aussie" | word == "home" | word == "fight" |
+           word == "omicron" | word == "shock" | word == "history" | word == "court" | word == "industry" |
+           word == "city" | word == "christmas" | word == "car" | word == "life" | word == "summer" |
+           word == "cricket" | word == "game" | word == "poms" | word == "death" | word == "border" |
+           word == "kids") %>% 
+  ggplot(aes(x = time, y = n, group = word, colour = word)) +
+  geom_line() +
+  geom_point(size = 0.4) +
+  labs(title = "The frequency of the 10 most used deadlines, Australian newspapers") +
+  ylab("Frequency") +
+  xlab("Date") +
+  scale_x_discrete(labels = c("2021-12-09-00-01-58"="Dec\n 9",  "2021-12-09-04-01-37"= "", "2021-12-09-08-01-21"= "", "2021-12-09-12-01-27"= "", "2021-12-09-16-01-24" = "", "2021-12-09-20-01-54" = "",
+                              "2021-12-10-00-01-51"="Dec\n 10", "2021-12-10-04-01-37"= "", "2021-12-10-08-01-15"= "", "2021-12-10-12-01-29"= "", "2021-12-10-16-02-11" = "", "2021-12-10-20-01-28" = "", 
+                              "2021-12-11-00-01-39"="Dec\n 11", "2021-12-11-04-01-51"= "", "2021-12-11-08-01-28"= "", "2021-12-11-12-01-32"= "", "2021-12-11-16-02-28" = "", "2021-12-11-20-01-38" = "",
+                              "2021-12-12-00-01-28"="Dec\n 12", "2021-12-12-04-01-25"= "", "2021-12-12-08-01-14"= "", "2021-12-12-12-01-26"= "", "2021-12-12-16-01-27" = "", "2021-12-12-20-01-45" = "",
+                              "2021-12-13-00-01-47"="Dec\n 13", "2021-12-13-04-01-19"= "", "2021-12-13-08-01-22"= "", "2021-12-13-12-01-25"= "", "2021-12-13-16-01-32" = "", "2021-12-13-20-01-28" = "",
+                              "2021-12-14-00-02-06"="Dec\n 14", "2021-12-14-04-01-58"= "", "2021-12-14-08-01-30"= "", "2021-12-14-12-01-57"= "", "2021-12-14-16-02-10" = "", "2021-12-14-20-01-33" = "",
+                              "2021-12-15-00-01-35"="Dec\n 15", "2021-12-15-04-01-28"= "", "2021-12-15-08-01-29"= "", "2021-12-15-12-01-34"= "", "2021-12-15-16-01-52" = "", "2021-12-15-20-01-35" = "")) +
+  theme(axis.ticks = element_blank()) +
+  theme_minimal()
+
+
+```
+
+
+Here we show our fifth graph. We can see that...
+
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+
+sixth_graph_nz_data <- headlines_tok %>% 
+  group_by(time, word) %>%
+  filter(country == "New-Zealand") %>% 
+  count(word, sort = TRUE, name = "n") %>% 
+  ungroup()
+
+test <- sixth_graph_nz_data %>% 
+  group_by(word) %>% 
+  arrange(desc(time)) %>% 
+  ungroup() %>% 
+  group_by(time) %>% 
+  slice(1:20)
+
+sixth_graph_nz <- sixth_graph_nz_data %>% 
+  filter(word == "christmas" | word == "covid" | word == "gifts" | word == "business" | word == "spy" |
+           word == "black" | word == "light" | word == "vaccine" | word == "plans" | word == "beijing" |
+           word == "border" | word == "care" | word == "outbreak" | word == "travel" | word == "summer" |
+           word == "orange" | word == "kiwi" | word == "guide") %>% 
+  ggplot(aes(x = time, y = n, group = word, colour = word)) +
+  geom_line() +
+  geom_point(size = 0.4) +
+  labs(title = "The frequency of the 10 most used deadlines, Australian newspapers") +
+  ylab("Frequency") +
+  xlab("Date") +
+  scale_x_discrete(labels = c("2021-12-09-00-01-58"="Dec\n 9",  "2021-12-09-04-01-37"= "", "2021-12-09-08-01-21"= "", "2021-12-09-12-01-27"= "", "2021-12-09-16-01-24" = "", "2021-12-09-20-01-54" = "",
+                              "2021-12-10-00-01-51"="Dec\n 10", "2021-12-10-04-01-37"= "", "2021-12-10-08-01-15"= "", "2021-12-10-12-01-29"= "", "2021-12-10-16-02-11" = "", "2021-12-10-20-01-28" = "", 
+                              "2021-12-11-00-01-39"="Dec\n 11", "2021-12-11-04-01-51"= "", "2021-12-11-08-01-28"= "", "2021-12-11-12-01-32"= "", "2021-12-11-16-02-28" = "", "2021-12-11-20-01-38" = "",
+                              "2021-12-12-00-01-28"="Dec\n 12", "2021-12-12-04-01-25"= "", "2021-12-12-08-01-14"= "", "2021-12-12-12-01-26"= "", "2021-12-12-16-01-27" = "", "2021-12-12-20-01-45" = "",
+                              "2021-12-13-00-01-47"="Dec\n 13", "2021-12-13-04-01-19"= "", "2021-12-13-08-01-22"= "", "2021-12-13-12-01-25"= "", "2021-12-13-16-01-32" = "", "2021-12-13-20-01-28" = "",
+                              "2021-12-14-00-02-06"="Dec\n 14", "2021-12-14-04-01-58"= "", "2021-12-14-08-01-30"= "", "2021-12-14-12-01-57"= "", "2021-12-14-16-02-10" = "", "2021-12-14-20-01-33" = "",
+                              "2021-12-15-00-01-35"="Dec\n 15", "2021-12-15-04-01-28"= "", "2021-12-15-08-01-29"= "", "2021-12-15-12-01-34"= "", "2021-12-15-16-01-52" = "", "2021-12-15-20-01-35" = "")) +
+  theme(axis.ticks = element_blank()) +
+  theme_minimal()
+
+```
+
+```{r, out.width='100%'}
+ggplotly(first_graph_all) %>% 
+  partial_bundle()
+```
+
+```{r, out.width='100%'}
+ggplotly(second_graph_us) %>% 
+  partial_bundle()
+```
+
+```{r, out.width='100%'}
+ggplotly(third_graph_uk) %>% 
+  partial_bundle()
+```
+
+```{r, out.width='100%'}
+ggplotly(fourth_graph_canada) %>% 
+  partial_bundle()
+```
+
+```{r, out.width='100%'}
+ggplotly(fifth_graph_australia) %>% 
+  partial_bundle()
+```
+
+```{r, out.width='100%'}
+ggplotly(sixth_graph_nz) %>% 
+  partial_bundle()
+```
+
+
