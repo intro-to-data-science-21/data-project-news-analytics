@@ -1,0 +1,1600 @@
+---
+title: "How do news headlines develop in the week before Christmas 2021?"
+subtitle: "The final project for the intro to data science course at Hertie"
+output: 
+  html_document:
+    toc: FALSE
+    df_print: paged
+    number_sections: FALSE
+    highlight: tango
+    theme: "lumen"
+    toc_depth: 3
+    toc_float: false
+    css: custom.css 
+    self_contained: false
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+## R Markdown
+
+library(tidyverse)
+library(fs)
+library(tidytext)
+library(fs)
+library(plotly)
+```
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+# importing csv files -----------------------------------------------------
+file_paths <- fs::dir_ls("data")
+file_paths
+
+file_contents <- list()
+
+for (i in seq_along(file_paths)) {
+  file_contents[[i]] <- read_csv(
+    file = file_paths[[i]]
+  )
+}
+
+file_contents <- set_names(file_contents, file_paths)
+
+headlines <- do.call(rbind, file_contents)
+```
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+# cleaning with function - before tokenizing! --------------------------------------------------
+
+clean_data <- function(x) { # x = path
+  df <- x
+  df$time <- as.POSIXct(df$time) %>% as.character() %>% str_replace_all("[ :]", "-")
+  df <- select(df, -"...1")
+  df$value <- gsub("<.*?>", "", df$value) # remove html tages
+  df$value <- gsub(' +',' ', df$value) # remove more than one space
+  df$value <- str_trim(df$value, side = c("both", "left", "right")) # remove spaces at start and end
+  df[df == ""] <- NA #adding NAs to blank cells
+  df <- na.omit(df) # remove NAs
+  df <- rename(df, headline = value)
+}
+
+headlines <- clean_data(headlines)
+```
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+headlines <- headlines %>% # maximum of 5500 headlines to avoid distortion, escecially of uk newspaper dailymail
+  mutate(country = dplyr::case_when(name == "guardian" ~ "UK",
+                                    name == "times" ~ "UK",
+                                    name == "dailymail" ~ "UK",
+                                    name == "independent" ~ "UK",
+                                    name == "mirror" ~ "UK",
+                                    name == "telegraph" ~ "UK",
+                                    name == "nytimes" ~ "US",
+                                    name == "wsj" ~ "US",
+                                    name == "usatoday" ~ "US",
+                                    name == "washingtonpost" ~ "US",
+                                    name == "latimes" ~ "US",
+                                    name == "tampabay" ~ "US",
+                                    name == "heraldsun" ~ "Australia",
+                                    name == "dailytelegraph" ~ "Australia",
+                                    name == "financialreview" ~ "Australia",
+                                    name == "couriermail" ~ "Australia",
+                                    name == "westaustralian" ~ "Australia",
+                                    name == "advertiser" ~ "Australia",
+                                    name == "globeandmail" ~ "Canada",
+                                    name == "thestar" ~ "Canada",
+                                    name == "nationalpost" ~ "Canada",
+                                    name == "torontosun" ~ "Canada",
+                                    name == "vancouversun" ~ "Canada",
+                                    name == "montrealgazette" ~ "Canada",
+                                    name == "nzherald" ~ "New-Zealand",
+                                    name == "waikato" ~ "New-Zealand",
+                                    name == "businessreview" ~ "New-Zealand",
+                                    name == "gisborneherald" ~ "New-Zealand",
+                                    name == "dominionpost" ~ "New-Zealand",
+                                    name == "thepress" ~ "New-Zealand"),
+         
+          format = dplyr::case_when(name == "dailymail" ~ "tabloid",
+                                    name == "mirror" ~ "tabloid",
+                                    name == "couriermail" ~ "tabloid",
+                                    name == "westaustralian" ~ "tabloid",
+                                    name == "advertiser" ~ "tabloid",
+                                    name == "torontosun" ~ "tabloid",
+                                    name == "nzherald" ~ "tabloid",
+                                    TRUE ~ "broadsheet"),
+         
+         day = dplyr::case_when(grepl("2021-12-09", time) ~ "December 9",
+                                grepl("2021-12-10", time) ~ "December 10",
+                                grepl("2021-12-11", time) ~ "December 11",
+                                grepl("2021-12-12", time) ~ "December 12",
+                                grepl("2021-12-13", time) ~ "December 13",
+                                grepl("2021-12-14", time) ~ "December 14",
+                                grepl("2021-12-15", time) ~ "December 15",
+                                grepl("2021-12-16", time) ~ "December 16"))
+
+
+
+
+
+# ensuring balance --------------------------------------------------------
+
+headlines <- headlines %>% 
+  group_by(name) %>% 
+  slice(1:5000) %>% 
+  ungroup()
+
+                                               
+# tokenizing --------------------------------------------------------------
+
+headlines_tok <- headlines %>% 
+  unnest_tokens(output = word, input = headline) %>% 
+  anti_join(stop_words) 
+
+
+# clean -------------------------------------------------------------------
+
+headlines_tok <- headlines_tok %>% 
+  filter(!grepl('content|subscriber|read|star|10|9|6|min|l.a|wa|nz|canada|uk|west|tampa|times', word))  # dailymail uses the word star everywhore
+
+
+
+
+
+
+```
+
+```{r message = FALSE, warning = FALSE, include = FALSE}
+# ensuring balance --------------------------------------------------------
+
+Number <-1
+
+headlines_tok %>% select(country) %>% distinct() %>% arrange(country)
+
+
+headlines_tok["Number"] <- Number
+
+
+
+Alldays<- headlines_tok %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words across all days")) + 
+     geom_blank()
+
+
+
+## December 9 all countries ##
+
+
+December9_All<- headlines_tok %>%
+filter(day == "December 9") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+
+ December9_UK <- headlines_tok %>%
+filter(day == "December 9"&
+country == "UK") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +                                  
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+
+ 
+ 
+ December9_Us <- headlines_tok %>%
+filter(day == "December 9"&
+country == "US") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December9_Canada <-headlines_tok %>%
+filter(day == "December 9"&
+country == "Canada") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ December9_NZ <-headlines_tok %>%
+filter(day == "December 9"&
+country == "New-Zealand") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December9_Aus <-headlines_tok %>%
+filter(day == "December 9"&
+country == "Australia") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+   ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ ## December 10 all countries ##
+ 
+ 
+ December10_All<- headlines_tok %>%
+filter(day == "December 10") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+December10_UK<-headlines_tok %>%
+filter(day == "December 10"&
+country == "UK") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+December10_US <- headlines_tok %>%
+filter(day == "December 10"&
+country == "US") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December10_Canada <-headlines_tok %>%
+filter(day == "December 10"&
+country == "Canada") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+December10_NZ <- headlines_tok %>%
+filter(day == "December 10"&
+country == "New-Zealand") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December10_Aus <- headlines_tok %>%
+filter(day == "December 10"&
+country == "Australia") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+   ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ ## December 11 all countries ##
+ 
+ 
+ 
+ December11_All<- headlines_tok %>%
+filter(day == "December 11") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ December11_UK<-headlines_tok %>%
+filter(day == "December 11"&
+country == "UK") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ 
+ 
+ December11_US<- headlines_tok %>%
+filter(day == "December 11"&
+country == "US") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December11_Canada <-headlines_tok %>%
+filter(day == "December 11"&
+country == "Canada") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ December11_NZ <-headlines_tok %>%
+filter(day == "December 11"&
+country == "New-Zealand") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December11_Aus <-headlines_tok %>%
+filter(day == "December 11"&
+country == "Australia") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+   ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ ## December 12 all countries ##
+ 
+ 
+ December12_All<- headlines_tok %>%
+filter(day == "December 12") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ December12_UK <- headlines_tok %>%
+filter(day == "December 12"&
+country == "UK") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ 
+ 
+ December12_US <-headlines_tok %>%
+filter(day == "December 12"&
+country == "US") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December12_Canada <-headlines_tok %>%
+filter(day == "December 12"&
+country == "Canada") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ December12_NZ <-headlines_tok %>%
+filter(day == "December 12"&
+country == "New-Zealand") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December12_Aus <-headlines_tok %>%
+filter(day == "December 12"&
+country == "Australia") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+   ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ ## December 13 ##
+ 
+ December13_All<- headlines_tok %>%
+filter(day == "December 13") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ 
+December13_UK <-headlines_tok %>%
+filter(day == "December 13"&
+country == "UK") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ 
+ 
+ December13_US <-headlines_tok %>%
+filter(day == "December 13"&
+country == "US") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December13_Canada <-headlines_tok %>%
+filter(day == "December 13"&
+country == "Canada") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ December13_NZ <-headlines_tok %>%
+filter(day == "December 13"&
+country == "New-Zealand") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December13_Aus <-headlines_tok %>%
+filter(day == "December 13"&
+country == "Australia") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+   ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ ## December 14##
+ 
+ December14_All<- headlines_tok %>%
+filter(day == "December 14") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ December14_UK <-headlines_tok %>%
+filter(day == "December 14"&
+country == "UK") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ 
+ 
+ December14_US <-headlines_tok %>%
+filter(day == "December 14"&
+country == "US") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December14_Canada <-headlines_tok %>%
+filter(day == "December 14"&
+country == "Canada") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ December14_NZ <-headlines_tok %>%
+filter(day == "December 14"&
+country == "New-Zealand") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December14_Aus <-headlines_tok %>%
+filter(day == "December 14"&
+country == "Australia") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+   ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ ## December 15
+ 
+ December15_All<- headlines_tok %>%
+filter(day == "December 15") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ 
+ 
+December15_UK <- headlines_tok %>%
+filter(day == "December 15"&
+country == "UK") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ 
+ 
+ December15_US <-headlines_tok %>%
+filter(day == "December 15"&
+country == "US") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December15_Canada <-headlines_tok %>%
+filter(day == "December 15"&
+country == "Canada") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ December15_NZ <- headlines_tok %>%
+filter(day == "December 15"&
+country == "New-Zealand") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December15_Aus <- headlines_tok %>%
+filter(day == "December 15"&
+country == "Australia") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+   ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ ## December 16
+ 
+ 
+ December16_All<- headlines_tok %>%
+filter(day == "December 16") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December16_UK<- headlines_tok %>%
+filter(day == "December 16"&
+country == "UK") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ 
+ December16_US<- headlines_tok %>%
+filter(day == "December 16"&
+country == "US") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December16_Canada <- headlines_tok %>%
+filter(day == "December 16"&
+country == "Canada") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ December16_NZ <-headlines_tok %>%
+filter(day == "December 16"&
+country == "New-Zealand") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+    ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() + xlab("word")+
+    ## Bonus: uncomment to make some aesthetic changes or add your own
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+ 
+ 
+ December16_Aus<-headlines_tok %>%
+filter(day == "December 16"&
+country == "Australia") %>%
+group_by(word) %>% 
+       summarise(occurrences=sum(Number)) %>% 
+     arrange(desc(occurrences)) %>% 
+      top_n(20) %>%
+      ungroup() %>% 
+   ggplot(aes(x=reorder(word,occurrences), 
+               y=occurrences)) +
+    geom_col() +
+  xlab("word")+
+    ylab("count") +
+    coord_flip() +
+     theme_minimal() +
+   scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
+     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     geom_blank()
+
+
+                                               
+
+
+```
+
+
+## title {.tabset .tabset-fade .tabset-pills}
+The headlines used in the main newspapers of the US, UK, Canada, Australia and New-Zealand between December 9 (0.00 CET) and December 16 (0.00 CET)
+
+### Days {.tabset .tabset-fade .tabset-pills}
+
+```{r, out.width='100%'}
+ggplotly(Alldays) %>% 
+  partial_bundle()
+```
+
+It is evident that in all countries, the large majority of headlines relate to *Covid-19* and *Christmas*. In all countries, the usage of words related to these topics fluctuated heavily. This is due to the fact that new developments constantly arise with regards to these topics, such as: what will be the effect of the omicron variant and will we be able to visit our families during Christmas?
+
+### December 9 {.tabset .tabset-fade .tabset-pills}
+
+#### All newspapers
+
+```{r, out.width='100%'}
+ggplotly(December9_All) %>% 
+  partial_bundle()
+```
+
+#### US
+
+```{r, out.width='100%'}
+
+ggplotly(December9_Us) %>% 
+  partial_bundle()
+
+```
+
+#### UK
+
+```{r, out.width='100%'}
+
+ggplotly(December9_UK) %>% 
+  partial_bundle()
+
+```
+
+#### CANADA
+
+```{r, out.width='100%'}
+
+ggplotly(December9_Canada) %>% 
+  partial_bundle()
+
+```
+
+#### AUSTRALIA
+
+```{r, out.width='100%'}
+
+ggplotly(December9_Aus) %>% 
+  partial_bundle()
+
+```
+
+
+#### NEW ZEALAND
+
+```{r, out.width='100%'}
+
+ggplotly(December9_NZ) %>% 
+  partial_bundle()
+
+```
+
+
+### December 10 {.tabset .tabset-fade .tabset-pills}
+
+#### All newspapers
+
+```{r, out.width='100%'}
+ggplotly(December10_All) %>% 
+  partial_bundle()
+```
+
+#### US
+
+```{r, out.width='100%'}
+
+ggplotly(December10_US) %>% 
+  partial_bundle()
+
+```
+
+#### UK
+
+```{r, out.width='100%'}
+
+ggplotly(December10_UK) %>% 
+  partial_bundle()
+
+```
+
+#### CANADA
+
+```{r, out.width='100%'}
+
+ggplotly(December10_Canada) %>% 
+  partial_bundle()
+
+```
+
+#### AUSTRALIA
+
+```{r, out.width='100%'}
+
+ggplotly(December10_Aus) %>% 
+  partial_bundle()
+
+```
+
+
+#### NEW ZEALAND
+
+```{r, out.width='100%'}
+
+ggplotly(December10_NZ) %>% 
+  partial_bundle()
+
+```
+
+### December 11 {.tabset .tabset-fade .tabset-pills}
+
+#### All newspapers
+
+```{r, out.width='100%'}
+ggplotly(December11_All) %>% 
+  partial_bundle()
+```
+
+#### US
+
+```{r, out.width='100%'}
+
+ggplotly(December11_US) %>% 
+  partial_bundle()
+
+```
+
+#### UK
+
+```{r, out.width='100%'}
+
+ggplotly(December11_UK) %>% 
+  partial_bundle()
+
+```
+
+#### CANADA
+
+```{r, out.width='100%'}
+
+ggplotly(December11_Canada) %>% 
+  partial_bundle()
+
+```
+
+#### AUSTRALIA
+
+```{r, out.width='100%'}
+
+ggplotly(December11_Aus) %>% 
+  partial_bundle()
+
+```
+
+
+#### NEW ZEALAND
+
+```{r, out.width='100%'}
+
+ggplotly(December11_NZ) %>% 
+  partial_bundle()
+
+```
+
+
+### December 12 {.tabset .tabset-fade .tabset-pills}
+
+#### All newspapers
+
+```{r, out.width='100%'}
+ggplotly(December12_All) %>% 
+  partial_bundle()
+```
+
+#### US
+
+```{r, out.width='100%'}
+
+ggplotly(December12_US) %>% 
+  partial_bundle()
+
+```
+
+#### UK
+
+```{r, out.width='100%'}
+
+ggplotly(December12_UK) %>% 
+  partial_bundle()
+
+```
+
+#### CANADA
+
+```{r, out.width='100%'}
+
+ggplotly(December12_Canada) %>% 
+  partial_bundle()
+
+```
+
+#### AUSTRALIA
+
+```{r, out.width='100%'}
+
+ggplotly(December12_Aus) %>% 
+  partial_bundle()
+
+```
+
+
+#### NEW ZEALAND
+
+```{r, out.width='100%'}
+
+ggplotly(December12_NZ) %>% 
+  partial_bundle()
+
+```
+
+### December 13 {.tabset .tabset-fade .tabset-pills}
+
+#### All newspapers
+
+```{r, out.width='100%'}
+ggplotly(December13_All) %>% 
+  partial_bundle()
+```
+
+#### US
+
+```{r, out.width='100%'}
+
+ggplotly(December13_US) %>% 
+  partial_bundle()
+
+```
+
+#### UK
+
+```{r, out.width='100%'}
+
+ggplotly(December13_UK) %>% 
+  partial_bundle()
+
+```
+
+#### CANADA
+
+```{r, out.width='100%'}
+
+ggplotly(December13_Canada) %>% 
+  partial_bundle()
+
+```
+
+#### AUSTRALIA
+
+```{r, out.width='100%'}
+
+ggplotly(December13_Aus) %>% 
+  partial_bundle()
+
+```
+
+
+#### NEW ZEALAND
+
+```{r, out.width='100%'}
+
+ggplotly(December13_NZ) %>% 
+  partial_bundle()
+
+```
+
+### December 14 {.tabset .tabset-fade .tabset-pills}
+
+#### All newspapers
+
+```{r, out.width='100%'}
+ggplotly(December14_All) %>% 
+  partial_bundle()
+```
+
+#### US
+
+```{r, out.width='100%'}
+
+ggplotly(December14_US) %>% 
+  partial_bundle()
+
+```
+
+#### UK
+
+```{r, out.width='100%'}
+
+ggplotly(December14_UK) %>% 
+  partial_bundle()
+
+```
+
+#### CANADA
+
+```{r, out.width='100%'}
+
+ggplotly(December14_Canada) %>% 
+  partial_bundle()
+
+```
+
+#### AUSTRALIA
+
+```{r, out.width='100%'}
+
+ggplotly(December14_Aus) %>% 
+  partial_bundle()
+
+```
+
+
+#### NEW ZEALAND
+
+```{r, out.width='100%'}
+
+ggplotly(December14_NZ) %>% 
+  partial_bundle()
+
+```
+
+### December 15 {.tabset .tabset-fade .tabset-pills}
+
+#### All newspapers
+
+```{r, out.width='100%'}
+ggplotly(December15_All) %>% 
+  partial_bundle()
+```
+
+#### US
+
+```{r, out.width='100%'}
+
+ggplotly(December15_US) %>% 
+  partial_bundle()
+
+```
+
+#### UK
+
+```{r, out.width='100%'}
+
+ggplotly(December15_UK) %>% 
+  partial_bundle()
+
+```
+
+#### CANADA
+
+```{r, out.width='100%'}
+
+ggplotly(December15_Canada) %>% 
+  partial_bundle()
+
+```
+
+#### AUSTRALIA
+
+```{r, out.width='100%'}
+
+ggplotly(December15_Aus) %>% 
+  partial_bundle()
+
+```
+
+
+#### NEW ZEALAND
+
+```{r, out.width='100%'}
+
+ggplotly(December15_NZ) %>% 
+  partial_bundle()
+
+```
+
+
+
+
+### December 16 {.tabset .tabset-fade .tabset-pills}
+
+#### All newspapers
+
+```{r, out.width='100%'}
+ggplotly(December16_All) %>% 
+  partial_bundle()
+```
+
+#### US
+
+```{r, out.width='100%'}
+
+ggplotly(December16_US) %>% 
+  partial_bundle()
+
+```
+
+#### UK
+
+```{r, out.width='100%'}
+
+ggplotly(December16_UK) %>% 
+  partial_bundle()
+
+```
+
+#### CANADA
+
+```{r, out.width='100%'}
+
+ggplotly(December16_Canada) %>% 
+  partial_bundle()
+
+```
+
+#### AUSTRALIA
+
+```{r, out.width='100%'}
+
+ggplotly(December16_Aus) %>% 
+  partial_bundle()
+
+```
+
+
+#### NEW ZEALAND
+
+```{r, out.width='100%'}
+
+ggplotly(December16_NZ) %>% 
+  partial_bundle()
+
+```
