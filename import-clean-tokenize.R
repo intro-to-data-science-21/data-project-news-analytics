@@ -86,6 +86,13 @@ headlines <- headlines %>% # maximum of 5500 headlines to avoid distortion, esce
                                 grepl("2021-12-15", time) ~ "December 15",
                                 grepl("2021-12-16", time) ~ "December 16"))
 
+
+# ensuring balance --------------------------------------------------------
+
+headlines <- headlines %>% 
+  group_by(name) %>% 
+  slice(1:5000)
+
                                                
 # tokenizing --------------------------------------------------------------
 
@@ -93,7 +100,6 @@ headlines_tok <- headlines %>%
   unnest_tokens(output = word, input = headline) %>% 
   anti_join(stop_words) 
 
-View(headlines_tok)
 
 # clean -------------------------------------------------------------------
 
@@ -101,21 +107,7 @@ headlines_tok <- headlines_tok %>%
   filter(!grepl('content|subscriber|read|star|10|9|6|min|l.a|wa|nz|canada|uk|west|tampa|times', word))  # dailymail uses the word star everywhore
 
 
-# test graph --------------------------------------------------------------
-gen_plot <- headlines_tok %>%  
-  count(word, sort = TRUE, name = "n")
-
-gen_plot %>% 
-  arrange(desc(n)) %>% 
-  slice(1:30) %>%
-  ggplot(aes(x = reorder(word, -n), y = n)) +
-  geom_bar(stat = "identity") +
-  coord_flip()
-
-
-
-## here its going down
-ds
+# balance  --------------------------------------------------------------
 
 
 
