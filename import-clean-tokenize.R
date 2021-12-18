@@ -91,7 +91,8 @@ headlines <- headlines %>% # maximum of 5500 headlines to avoid distortion, esce
 
 headlines <- headlines %>% 
   group_by(name) %>% 
-  slice(1:5000)
+  slice(1:5000) %>% 
+  ungroup()
 
                                                
 # tokenizing --------------------------------------------------------------
