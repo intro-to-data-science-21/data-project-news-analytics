@@ -1202,7 +1202,7 @@ filter(day == "December 16") %>%
 group_by(word) %>% 
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
-      top_n(20) %>%
+      top_n(15) %>%
       ungroup() 
  
  December16_All$word <- factor(December16_All$word, levels = December16_All$word[order(December16_All$occurrences)])
@@ -1214,7 +1214,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("The 20 most frequently used words by all newspapers on December 16")) +
+     ggtitle(paste("The 15 most frequently used words by all newspapers on December 16")) +
      geom_blank()
  
  
@@ -1224,7 +1224,7 @@ country == "UK") %>%
 group_by(word) %>% 
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
-      top_n(20) %>%
+      top_n(15) %>%
       ungroup() 
  
  
@@ -1237,7 +1237,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("The 20 most frequently used words by UK newspapers on December 16")) +
+     ggtitle(paste("The 15 most frequently used words by UK newspapers on December 16")) +
      geom_blank()
  
  
@@ -1248,7 +1248,7 @@ country == "US") %>%
 group_by(word) %>% 
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
-      top_n(20) %>%
+      top_n(15) %>%
       ungroup() 
  
  December16_US$word <- factor(December16_US$word, levels = December16_US$word[order(December16_US$occurrences)])
@@ -1260,7 +1260,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("The 20 most frequently used words by US newspapers on December 16")) +
+     ggtitle(paste("The 15 most frequently used words by US newspapers on December 16")) +
      geom_blank()
  
  
@@ -1272,7 +1272,7 @@ country == "Canada") %>%
 group_by(word) %>% 
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
-      top_n(20) %>%
+      top_n(15) %>%
       ungroup() 
  
  
@@ -1285,7 +1285,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("The 20 most frequently used words by Canada newspapers on December 16")) +
+     ggtitle(paste("The 15 most frequently used words by Canada newspapers on December 16")) +
      geom_blank()
  
  December16_NZ <-headlines_tok %>%
@@ -1294,7 +1294,7 @@ country == "New-Zealand") %>%
 group_by(word) %>% 
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
-      top_n(20) %>%
+      top_n(15) %>%
       ungroup()
  
  
@@ -1307,7 +1307,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("The 20 most frequently used words by New Zealand newspapers on December 16")) +
+     ggtitle(paste("The 15 most frequently used words by New Zealand newspapers on December 16")) +
      geom_blank()
  
  
@@ -1317,7 +1317,7 @@ country == "Australia") %>%
 group_by(word) %>% 
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
-      top_n(20) %>%
+      top_n(15) %>%
       ungroup()
  
  
@@ -1331,7 +1331,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("The 20 most frequently used words by Australia newspapers on December 16")) +
+     ggtitle(paste("The 15 most frequently used words by Australia newspapers on December 16")) +
      geom_blank()
 
 
