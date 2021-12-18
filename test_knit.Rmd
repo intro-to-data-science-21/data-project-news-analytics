@@ -1,14 +1,21 @@
 ---
-title: "Untitled"
-author: "Koen Oosthoek"
-date: "12/17/2021"
-output: html_document
+title: "How do news headlines develop in the week before Christmas 2021?"
+subtitle: "The final project for the intro to data science course at Hertie"
+output: 
+  html_document:
+    toc: FALSE
+    df_print: paged
+    number_sections: FALSE
+    highlight: tango
+    theme: "lumen"
+    toc_depth: 3
+    toc_float: false
+    css: custom.css 
+    self_contained: false
 ---
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
-
 
 ```{r message = FALSE, warning = FALSE, include = FALSE}
 ## R Markdown
@@ -18,8 +25,6 @@ library(fs)
 library(tidytext)
 library(fs)
 library(plotly)
-
-
 ```
 
 ```{r message = FALSE, warning = FALSE, include = FALSE}
@@ -162,7 +167,6 @@ first_graph_all <- first_graph_data %>%
 
 ```
    
-
 ```{r message = FALSE, warning = FALSE, include = FALSE}
 ## second graph: all newspapers in the US 
 
@@ -186,7 +190,7 @@ second_graph_us <- second_graph_us_data %>%
   ggplot(aes(x = time, y = n, group = word, colour = word)) +
   geom_line() +
   geom_point(size = 0.4) +
-  labs(title = "The frequency of the 10 most used deadlines, us newspapers") +
+  labs(title = "The frequency of the 10 most used deadlines, US newspapers") +
   ylab("Frequency") +
   xlab("Date") +
   scale_x_discrete(labels = c("2021-12-09-00-01-58"="Dec\n 9",  "2021-12-09-04-01-37"= "", "2021-12-09-08-01-21"= "", "2021-12-09-12-01-27"= "", "2021-12-09-16-01-24" = "", "2021-12-09-20-01-54" = "",
@@ -202,9 +206,6 @@ second_graph_us <- second_graph_us_data %>%
 
           
 ```
-
-
-Here we show our third graph. We can see that...
 
 ```{r message = FALSE, warning = FALSE, include = FALSE}
 ## third graph: all newspapers in the UK
@@ -229,7 +230,7 @@ third_graph_uk <- third_graph_uk_data %>%
   ggplot(aes(x = time, y = n, group = word, colour = word)) +
   geom_line() +
   geom_point(size = 0.4) +
-  labs(title = "The frequency of the 10 most used deadlines, us newspapers") +
+  labs(title = "The frequency of the 10 most used deadlines, UK newspapers") +
   ylab("Frequency") +
   xlab("Date") +
   scale_x_discrete(labels = c("2021-12-09-00-01-58"="Dec\n 9",  "2021-12-09-04-01-37"= "", "2021-12-09-08-01-21"= "", "2021-12-09-12-01-27"= "", "2021-12-09-16-01-24" = "", "2021-12-09-20-01-54" = "",
@@ -244,8 +245,6 @@ third_graph_uk <- third_graph_uk_data %>%
 
    
 ```
-
-Here we show our fourth graph. We can see that...
 
 ```{r message = FALSE, warning = FALSE, include = FALSE}
 fourth_graph_canada_data <- headlines_tok %>% 
@@ -283,8 +282,6 @@ fourth_graph_canada <- fourth_graph_canada_data %>%
   theme_minimal()
 
 ```
-
-Here we show our fifth graph. We can see that...
 
 ```{r message = FALSE, warning = FALSE, include = FALSE}
 ## fifth graph: all newspapers in Australia
@@ -327,10 +324,6 @@ fifth_graph_australia <- fifth_graph_australia_data %>%
 
 ```
 
-
-Here we show our fifth graph. We can see that...
-
-
 ```{r message = FALSE, warning = FALSE, include = FALSE}
 
 sixth_graph_nz_data <- headlines_tok %>% 
@@ -369,34 +362,148 @@ sixth_graph_nz <- sixth_graph_nz_data %>%
 
 ```
 
+
+## title {.tabset .tabset-fade .tabset-pills}
+The headlines used in the main newspapers of the US, UK, Canada, Australia and New-Zealand between December 9 (0.00 CET) and December 16 (0.00 CET)
+
+### All countries {.tabset .tabset-fade .tabset-pills}
+
 ```{r, out.width='100%'}
 ggplotly(first_graph_all) %>% 
   partial_bundle()
 ```
+
+It is evident that in all countries, the large majority of headlines relate to *Covid-19* and *Christmas*. In all countries, the usage of words related to these topics fluctuated heavily. This is due to the fact that new developments constantly arise with regards to these topics, such as: what will be the effect of the omicron variant and will we be able to visit our families during Christmas?
+
+### US {.tabset .tabset-fade .tabset-pills}
+
+#### All newspapers
 
 ```{r, out.width='100%'}
 ggplotly(second_graph_us) %>% 
   partial_bundle()
 ```
 
+#### NYtimes
+
+```{r, out.width='100%'}
+
+headlines_tok$number <- 1 
+
+test_df <- headlines_tok %>% 
+  filter(day == "December 9",
+         country == "UK") %>% 
+  group_by(word) %>% 
+  summarise(occurrences=sum(number)) %>%
+  arrange(desc(occurrences)) %>%
+  slice(1:20)
+  
+ggplot(aes(x = word, y = occurences)) +
+  geom_bar(stat = "identity")
+
+
+  
+  filter(day == "December 9") %>%
+  count() %>% 
+  arrange(desc(n)) %>% 
+  slice(1:20)
+
+filter(country == input$country & day ==input$day & format ==input$format & name ==input$name) %>% group_by(word) %>%
+summarise(occurrences=sum(Number)) %>%
+arrange(desc(occurrences)) %>%
+top_n(input$select_topn) %>%
+ungroup() %>%
+ggplot(aes(x=word,
+y=occurrences))
+
+
+
+second_graph_us_data_nytimes <- headlines_tok %>% 
+  filter(name == "nytimes") %>% 
+  group_by(time, word) %>%
+  count(word, sort = TRUE, name = "n") %>% 
+  ungroup()
+
+second_graph_us_nytimes <- second_graph_us_data_nytimes %>% 
+  filter(word == "covid" | word == "aid" | word == "beatles" | word == "billionaire" | word == "court" |
+           word == "democrats" | word == "omicron" | word == "schools" | word == "biden" | word == "inflation") %>% 
+  ggplot(aes(x = time, y = n, group = word, colour = word)) +
+  geom_line() +
+  geom_point(size = 0.4) +
+  labs(title = "The frequency of the 10 most used deadlines, us newspapers") +
+  ylab("Frequency") +
+  xlab("Date") +
+  scale_x_discrete(labels = c("2021-12-09-00-01-58"="Dec\n 9",  "2021-12-09-04-01-37"= "", "2021-12-09-08-01-21"= "", "2021-12-09-12-01-27"= "", "2021-12-09-16-01-24" = "", "2021-12-09-20-01-54" = "",
+                              "2021-12-10-00-01-51"="Dec\n 10", "2021-12-10-04-01-37"= "", "2021-12-10-08-01-15"= "", "2021-12-10-12-01-29"= "", "2021-12-10-16-02-11" = "", "2021-12-10-20-01-28" = "", 
+                              "2021-12-11-00-01-39"="Dec\n 11", "2021-12-11-04-01-51"= "", "2021-12-11-08-01-28"= "", "2021-12-11-12-01-32"= "", "2021-12-11-16-02-28" = "", "2021-12-11-20-01-38" = "",
+                              "2021-12-12-00-01-28"="Dec\n 12", "2021-12-12-04-01-25"= "", "2021-12-12-08-01-14"= "", "2021-12-12-12-01-26"= "", "2021-12-12-16-01-27" = "", "2021-12-12-20-01-45" = "",
+                              "2021-12-13-00-01-47"="Dec\n 13", "2021-12-13-04-01-19"= "", "2021-12-13-08-01-22"= "", "2021-12-13-12-01-25"= "", "2021-12-13-16-01-32" = "", "2021-12-13-20-01-28" = "",
+                              "2021-12-14-00-02-06"="Dec\n 14", "2021-12-14-04-01-58"= "", "2021-12-14-08-01-30"= "", "2021-12-14-12-01-57"= "", "2021-12-14-16-02-10" = "", "2021-12-14-20-01-33" = "",
+                              "2021-12-15-00-01-35"="Dec\n 15", "2021-12-15-04-01-28"= "", "2021-12-15-08-01-29"= "", "2021-12-15-12-01-34"= "", "2021-12-15-16-01-52" = "", "2021-12-15-20-01-35" = "")) +
+  theme(axis.ticks = element_blank()) +
+  theme_minimal() +
+  scale_color_brewer(palette = "Set3")
+
+ggplotly(second_graph_us_nytimes) %>% 
+  partial_bundle()
+
+```
+
+#### Wall Street Journal
+
+#### LA Times
+
+#### Tampala Bay
+
+
+
+
+
+### UK {.tabset .tabset-fade .tabset-pills}
+
 ```{r, out.width='100%'}
 ggplotly(third_graph_uk) %>% 
   partial_bundle()
 ```
+
+#### The Guardian
+
+hi
+
+### Canada {.tabset .tabset-fade .tabset-pills}
 
 ```{r, out.width='100%'}
 ggplotly(fourth_graph_canada) %>% 
   partial_bundle()
 ```
 
+### Australia {.tabset .tabset-fade .tabset-pills}
+
 ```{r, out.width='100%'}
 ggplotly(fifth_graph_australia) %>% 
   partial_bundle()
 ```
 
+### New-Zealand {.tabset .tabset-fade .tabset-pills}
+
 ```{r, out.width='100%'}
 ggplotly(sixth_graph_nz) %>% 
   partial_bundle()
 ```
+
+
+## Analysis
+
+We can summarize the week before Christmas 2021 with two words: *Covid-19* and *Christmas*. 
+
+
+
+
+
+
+
+
+
+
 
 
