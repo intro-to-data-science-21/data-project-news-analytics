@@ -150,28 +150,35 @@ headlines_tok <- headlines_tok %>%
 
 Number <-1
 
-headlines_tok %>% select(country) %>% distinct() %>% arrange(country)
 
 
 headlines_tok["Number"] <- Number
 
 
 
-Alldays<- headlines_tok %>%
-group_by(word) %>% 
+Alldays<-headlines_tok %>%
+        group_by(word) %>% 
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+
+
+
+
+Alldays$word <- factor(Alldays$word, levels = Alldays$word[order(Alldays$occurrences)])
+
+ Alldays <- Alldays %>% ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words across all days")) + 
+     ggtitle(paste("Top", 20 , "frequently used words across the world ")) + 
      geom_blank()
+
+
 
 
 
@@ -184,8 +191,11 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+
+December9_All$word <- factor(December9_All$word, levels = December9_All$word[order(December9_All$occurrences)])
+
+    December9_All<-December9_All %>%  ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
@@ -194,6 +204,9 @@ group_by(word) %>%
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
      ggtitle(paste("Top", 20 , "frequently used words")) + 
      geom_blank()
+    
+   
+  
 
  December9_UK <- headlines_tok %>%
 filter(day == "December 9"&
@@ -202,8 +215,12 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ December9_UK$word <- factor(December9_UK$word, levels = December9_UK$word[order(December9_UK$occurrences)])
+ 
+ 
+ December9_UK <- December9_UK %>%  ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
@@ -224,8 +241,13 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+ December9_Us$word <- factor(December9_Us$word, levels = December9_Us$word[order(December9_Us$occurrences)])
+ 
+ 
+ December9_Us <- December9_Us %>%  ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
@@ -243,8 +265,12 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ December9_Canada$word <- factor(December9_Canada$word, levels = December9_Canada$word[order(December9_Canada$occurrences)])
+ 
+ 
+ December9_Canada <- December9_Canada %>% ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
@@ -261,8 +287,12 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup()
+ 
+ December9_NZ$word <- factor(December9_NZ$word, levels = December9_NZ$word[order(December9_NZ$occurrences)])
+ 
+ 
+ December9_NZ <- December9_NZ %>% ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
@@ -280,8 +310,12 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-   ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ December9_Aus$word <- factor(December9_Aus$word, levels = December9_Aus$word[order(December9_Aus$occurrences)])
+ 
+ 
+ December9_Aus <- December9_Aus %>% ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
@@ -290,7 +324,7 @@ group_by(word) %>%
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
      ggtitle(paste("Top", 20 , "frequently used words")) + 
      geom_blank()
- 
+
  
  ## December 10 all countries ##
  
@@ -301,8 +335,11 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup()
+ 
+ December10_All$word <- factor(December10_All$word, levels = December10_All$word[order(December10_All$occurrences)])
+ 
+ December10_All <-  December10_All %>%  ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
@@ -319,8 +356,12 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup()  
+ 
+December10_UK$word <- factor(December10_UK$word, levels = December10_UK$word[order(December10_UK$occurrences)])
+ 
+ December10_UK <-  December10_UK %>%
+ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     
@@ -339,8 +380,12 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+
+December10_US$word <- factor(December10_US$word, levels = December10_US$word[order(December10_US$occurrences)])
+
+December10_US <- December10_US %>% 
+    ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     
@@ -359,8 +404,12 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup()
+ 
+ December10_Canada$word <- factor(December10_Canada$word, levels = December10_Canada$word[order(December10_Canada$occurrences)])
+
+ 
+  December10_Canada <- December10_Canada %>%   ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     
@@ -378,8 +427,12 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+
+December10_NZ$word <- factor(December10_NZ$word, levels = December10_NZ$word[order(December10_NZ$occurrences)])
+
+
+ December10_NZ <- December10_NZ %>%    ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     
@@ -398,8 +451,13 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-   ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+ December10_Aus$word <- factor(December10_Aus$word, levels = December10_Aus$word[order(December10_Aus$occurrences)])
+ 
+ 
+ December10_Aus <-December10_Aus %>%   ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     
@@ -420,8 +478,11 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ December11_All$word <- factor(December11_All$word, levels = December11_All$word[order(December11_All$occurrences)])
+ 
+   December11_All <-  December11_All %>%  ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
@@ -430,6 +491,7 @@ group_by(word) %>%
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
      ggtitle(paste("Top", 20 , "frequently used words")) + 
      geom_blank()
+   
  
  December11_UK<-headlines_tok %>%
 filter(day == "December 11"&
@@ -438,8 +500,11 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup()
+ 
+ December11_UK$word <- factor(December11_UK$word, levels = December11_UK$word[order(December11_UK$occurrences)])
+ 
+ December11_UK <- December11_UK %>%   ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     
@@ -460,8 +525,12 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+
+ December11_US$word <- factor(December11_US$word, levels = December11_US$word[order(December11_US$occurrences)]) 
+ 
+ 
+December11_US <-  December11_US %>%   ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     
@@ -480,9 +549,11 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
-               y=occurrences)) +
+      ungroup() 
+ 
+ December11_Canada$word <- factor(December11_Canada$word, levels = December11_Canada$word[order(December11_Canada$occurrences)]) 
+ 
+ December11_Canada <-December11_Canada %>%  ggplot(aes(x=word, y=occurrences)) +
     geom_col() + xlab("word")+
     
     ylab("count") +
@@ -499,8 +570,12 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+ December11_NZ$word <- factor(December11_NZ$word, levels = December11_NZ$word[order(December11_NZ$occurrences)]) 
+ 
+  December11_NZ <-December11_NZ %>%   ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     
@@ -519,11 +594,16 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-   ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+ December11_Aus$word <- factor(December11_Aus$word, levels = December11_Aus$word[order(December11_Aus$occurrences)]) 
+ 
+ 
+ 
+   December11_Aus <- December11_Aus %>% ggplot(aes(x= word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -540,8 +620,13 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ December12_All$word <- factor(December12_All$word, levels = December12_All$word[order(December12_All$occurrences)])
+ 
+ 
+ 
+December12_All <-December12_All %>% ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
@@ -558,11 +643,17 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ December12_UK$word <- factor(December12_UK$word, levels = December12_UK$word[order(December12_UK$occurrences)])
+ 
+ 
+ 
+December12_UK <-December12_UK %>% 
+ 
+    ggplot(aes(x=word,
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -580,11 +671,16 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ December12_US$word <- factor(December12_US$word, levels = December12_US$word[order(December12_US$occurrences)])
+ 
+ 
+ 
+December12_US <-December12_US %>% 
+    ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -600,17 +696,25 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup()
+ 
+ December12_Canada$word <- factor(December12_Canada$word, levels = December12_Canada$word[order(December12_Canada$occurrences)])
+ 
+ 
+ 
+December12_Canada <-December12_Canada %>%
+    ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
      ggtitle(paste("Top", 20 , "frequently used words")) + 
      geom_blank()
+
+
+
  
  December12_NZ <-headlines_tok %>%
 filter(day == "December 12"&
@@ -619,11 +723,14 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ December12_NZ$word <- factor(December12_NZ$word, levels = December12_NZ$word[order(December12_NZ$occurrences)])
+ 
+ 
+  December12_NZ <-December12_NZ %>%  ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -639,11 +746,16 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-   ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+ December12_Aus$word <- factor(December12_Aus$word, levels = December12_Aus$word[order(December12_Aus$occurrences)])
+ 
+ 
+ December12_Aus <-December12_Aus %>% 
+   ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -659,8 +771,13 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup()
+ 
+ 
+ 
+ December13_All$word <- factor(December13_All$word, levels = December13_All$word[order(December13_All$occurrences)])
+ 
+    December13_All <-December13_All %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
@@ -679,11 +796,14 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+
+
+    December13_UK$word <- factor(December13_UK$word, levels = December13_UK$word[order(December13_UK$occurrences)])
+ 
+    December13_UK <-December13_UK %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -701,11 +821,14 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup()
+ 
+ 
+     December13_US$word <- factor(December13_US$word, levels = December13_US$word[order(December13_US$occurrences)])
+ 
+    December13_US <-December13_US %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -714,6 +837,10 @@ group_by(word) %>%
      geom_blank()
  
  
+    
+    
+    
+  
  December13_Canada <-headlines_tok %>%
 filter(day == "December 13"&
 country == "Canada") %>%
@@ -721,17 +848,23 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ December13_Canada$word <- factor(December13_Canada$word, levels = December13_Canada$word[order(December13_Canada$occurrences)])
+ 
+    December13_Canada <-December13_Canada %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
      ggtitle(paste("Top", 20 , "frequently used words")) + 
      geom_blank()
+    
+    
+  
+    
  
  December13_NZ <-headlines_tok %>%
 filter(day == "December 13"&
@@ -740,11 +873,15 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup()
+ 
+ 
+ 
+    December13_NZ$word <- factor(December13_NZ$word, levels = December13_NZ$word[order(December13_NZ$occurrences)])
+ 
+    December13_NZ <-December13_NZ %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -752,6 +889,7 @@ group_by(word) %>%
      ggtitle(paste("Top", 20 , "frequently used words")) + 
      geom_blank()
  
+    
  
  December13_Aus <-headlines_tok %>%
 filter(day == "December 13"&
@@ -760,11 +898,13 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-   ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ December13_Aus$word <- factor(December13_Aus$word, levels = December13_Aus$word[order(December13_Aus$occurrences)])
+ 
+    December13_Aus <-December13_Aus %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -781,8 +921,12 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+ December14_All$word <- factor(December14_All$word, levels = December14_All$word[order(December14_All$occurrences)])
+ 
+    December14_All <-December14_All %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
@@ -791,6 +935,8 @@ group_by(word) %>%
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
      ggtitle(paste("Top", 20 , "frequently used words")) + 
      geom_blank()
+    
+    
  
  December14_UK <-headlines_tok %>%
 filter(day == "December 14"&
@@ -799,11 +945,14 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+    December14_UK$word <- factor(December14_UK$word, levels = December14_UK$word[order(December14_UK$occurrences)])
+ 
+    December14_UK <-December14_UK %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -821,17 +970,24 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup()
+ 
+  
+ 
+ 
+   December14_US$word <- factor(December14_US$word, levels = December14_US$word[order(December14_US$occurrences)])
+ 
+    December14_US <-December14_US %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
      ggtitle(paste("Top", 20 , "frequently used words")) + 
      geom_blank()
+    
+    
  
  
  December14_Canada <-headlines_tok %>%
@@ -841,11 +997,14 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+    December14_Canada$word <- factor(December14_Canada$word, levels = December14_Canada$word[order(December14_Canada$occurrences)])
+ 
+    December14_Canada <-December14_Canada %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -853,6 +1012,9 @@ group_by(word) %>%
      ggtitle(paste("Top", 20 , "frequently used words")) + 
      geom_blank()
  
+    
+    
+    
  December14_NZ <-headlines_tok %>%
 filter(day == "December 14"&
 country == "New-Zealand") %>%
@@ -860,11 +1022,14 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+December14_NZ$word <- factor(December14_NZ$word, levels = December14_NZ$word[order(December14_NZ$occurrences)])
+ 
+    December14_NZ <-December14_NZ %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -880,11 +1045,15 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-   ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+ 
+   December14_Aus$word <- factor(December14_Aus$word, levels = December14_Aus$word[order(December14_Aus$occurrences)])
+ 
+    December14_Aus <-December14_Aus %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -901,8 +1070,13 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+ 
+    December15_All$word <- factor(December15_All$word, levels = December15_All$word[order(December15_All$occurrences)])
+ 
+    December15_All <-December15_All %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
@@ -922,11 +1096,15 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+
+
+
+   December15_UK$word <- factor(December15_UK$word, levels = December15_UK$word[order(December15_UK$occurrences)])
+ 
+    December15_UK <-December15_UK %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -944,11 +1122,14 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup()
+ 
+ 
+    December15_US$word <- factor(December15_US$word, levels = December15_US$word[order(December15_US$occurrences)])
+ 
+    December15_US <-December15_US %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -964,11 +1145,14 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+    December15_Canada$word <- factor(December15_Canada$word, levels = December15_Canada$word[order(December15_Canada$occurrences)])
+ 
+    December15_Canada <-December15_Canada %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -983,11 +1167,14 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+    December15_NZ$word <- factor(December15_NZ$word, levels = December15_NZ$word[order(December15_NZ$occurrences)])
+ 
+    December15_NZ <-December15_NZ %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -1003,11 +1190,14 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-   ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+   December15_Aus$word <- factor(December15_Aus$word, levels = December15_Aus$word[order(December15_Aus$occurrences)])
+ 
+    December15_Aus <-December15_Aus %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -1024,8 +1214,11 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ December16_All$word <- factor(December16_All$word, levels = December16_All$word[order(December16_All$occurrences)])
+ 
+    December16_All <-December16_All %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
     ylab("count") +
@@ -1043,11 +1236,14 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+ December16_UK$word <- factor(December16_UK$word, levels = December16_UK$word[order(December16_UK$occurrences)])
+ 
+    December16_UK <-December16_UK %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -1064,11 +1260,13 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ December16_US$word <- factor(December16_US$word, levels = December16_US$word[order(December16_US$occurrences)])
+ 
+    December16_US <-December16_US %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -1077,6 +1275,8 @@ group_by(word) %>%
      geom_blank()
  
  
+    
+    
  December16_Canada <- headlines_tok %>%
 filter(day == "December 16"&
 country == "Canada") %>%
@@ -1084,11 +1284,14 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup() 
+ 
+ 
+    December16_Canada$word <- factor(December16_Canada$word, levels = December16_Canada$word[order(December16_Canada$occurrences)])
+ 
+    December16_Canada <-December16_Canada %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -1103,11 +1306,14 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-    ggplot(aes(x=reorder(word,occurrences), 
+      ungroup()
+ 
+ 
+    December16_NZ$word <- factor(December16_NZ$word, levels = December16_NZ$word[order(December16_NZ$occurrences)])
+ 
+    December16_NZ <-December16_NZ %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() + xlab("word")+
-    ## Bonus: uncomment to make some aesthetic changes or add your own
     ylab("count") +
     coord_flip() +
      theme_minimal() +
@@ -1123,8 +1329,12 @@ group_by(word) %>%
        summarise(occurrences=sum(Number)) %>% 
      arrange(desc(occurrences)) %>% 
       top_n(20) %>%
-      ungroup() %>% 
-   ggplot(aes(x=reorder(word,occurrences), 
+      ungroup()
+ 
+ 
+   December16_Aus$word <- factor(December16_Aus$word, levels = December16_Aus$word[order(December16_Aus$occurrences)])
+ 
+    December16_Aus <-December16_Aus %>%ggplot(aes(x=word, 
                y=occurrences)) +
     geom_col() +
   xlab("word")+
