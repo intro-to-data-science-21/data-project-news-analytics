@@ -202,7 +202,7 @@ December9_All$word <- factor(December9_All$word, levels = December9_All$word[ord
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by all the newspapers on December 9th")) + 
      geom_blank()
     
    
@@ -227,7 +227,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +                                  
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by UK newspapers on December 9th ")) + 
      geom_blank()
  
  
@@ -254,7 +254,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by US newspapers on December 9th")) + 
      geom_blank()
  
  
@@ -277,7 +277,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Canada newspapers on December 9th")) + 
      geom_blank()
  
  December9_NZ <-headlines_tok %>%
@@ -299,7 +299,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by New Zealand newspapers on December 9th")) + 
      geom_blank()
  
  
@@ -322,7 +322,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Australian newspapers on December 9th")) + 
      geom_blank()
 
  
@@ -346,7 +346,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by all the newspapers on December 10th")) + 
      geom_blank()
  
 December10_UK<-headlines_tok %>%
@@ -369,7 +369,7 @@ ggplot(aes(x=word,
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by UK newspapers on December 10th")) + 
      geom_blank()
  
  
@@ -393,7 +393,7 @@ December10_US <- December10_US %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by US newspapers on December 10th")) + 
      geom_blank()
  
  
@@ -417,7 +417,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Canada newspapers on December 10th")) + 
      geom_blank()
  
 December10_NZ <- headlines_tok %>%
@@ -440,7 +440,7 @@ December10_NZ$word <- factor(December10_NZ$word, levels = December10_NZ$word[ord
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by New Zealand newspapers on December 10th")) + 
      geom_blank()
  
  
@@ -465,7 +465,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Australia newspapers on December 10th")) + 
      geom_blank()
  
  ## December 11 all countries ##
@@ -489,7 +489,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by all the newspapers on December 11th")) + 
      geom_blank()
    
  
@@ -512,7 +512,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by UK newspapers on December 11th")) + 
      geom_blank()
  
  
@@ -538,7 +538,7 @@ December11_US <-  December11_US %>%   ggplot(aes(x=word,
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by US newspapers on December 11th")) + 
      geom_blank()
  
  
@@ -560,7 +560,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Canada newspapers on December 11th")) + 
      geom_blank()
  
  December11_NZ <-headlines_tok %>%
@@ -583,7 +583,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by New Zealand newspapers on December 11th")) + 
      geom_blank()
  
  
@@ -608,7 +608,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Australia newspapers on December 11th")) + 
      geom_blank()
  
  ## December 12 all countries ##
@@ -633,7 +633,7 @@ December12_All <-December12_All %>% ggplot(aes(x=word,
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by all newspapers on December 12th")) + 
      geom_blank()
  
  December12_UK <- headlines_tok %>%
@@ -658,7 +658,7 @@ December12_UK <-December12_UK %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by UK newspapers on December 12th")) + 
      geom_blank()
  
  
@@ -685,7 +685,7 @@ December12_US <-December12_US %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by US newspapers on December 12th")) + 
      geom_blank()
  
  
@@ -710,7 +710,7 @@ December12_Canada <-December12_Canada %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Canada newspapers on December 12th")) + 
      geom_blank()
 
 
@@ -735,7 +735,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by New Zealand newspapers on December 12th")) + 
      geom_blank()
  
  
@@ -760,7 +760,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Australia newspapers on December 9th")) + 
      geom_blank()
  
  ## December 13 ##
@@ -784,7 +784,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by all newspapers on December 13th")) + 
      geom_blank()
  
  
@@ -808,7 +808,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by UK newspapers on December 13th")) + 
      geom_blank()
  
  
@@ -833,7 +833,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by US newspapers on December 13th")) + 
      geom_blank()
  
  
@@ -859,7 +859,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Canada newspapers on December 13th")) + 
      geom_blank()
     
     
@@ -886,7 +886,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by New Zealand newspapers on December 13th")) + 
      geom_blank()
  
     
@@ -909,7 +909,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Australia newspapers on December 13th")) + 
      geom_blank()
  
  
@@ -933,7 +933,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by all newspapers on December 14th")) + 
      geom_blank()
     
     
@@ -957,7 +957,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by UK newspapers on December 14th")) + 
      geom_blank()
  
  
@@ -984,7 +984,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by US newspapers on December 14th")) + 
      geom_blank()
     
     
@@ -1009,7 +1009,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Canada newspapers on December 14th")) + 
      geom_blank()
  
     
@@ -1034,7 +1034,7 @@ December14_NZ$word <- factor(December14_NZ$word, levels = December14_NZ$word[ord
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by New Zealand newspapers on December 14th")) + 
      geom_blank()
  
  
@@ -1058,7 +1058,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Australia newspapers on December 14th")) + 
      geom_blank()
  
  
@@ -1083,7 +1083,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by all newspapers on December 15th")) + 
      geom_blank()
  
  
@@ -1109,7 +1109,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by UK newspapers on December 15th")) + 
      geom_blank()
  
  
@@ -1134,7 +1134,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by US newspapers on December 15th")) + 
      geom_blank()
  
  
@@ -1157,7 +1157,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Canada newspapers on December 15th")) + 
      geom_blank()
  
  December15_NZ <- headlines_tok %>%
@@ -1179,7 +1179,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by New Zealand newspapers on December 15th")) + 
      geom_blank()
  
  
@@ -1202,7 +1202,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Australia newspapers on December 15th")) + 
      geom_blank()
  
  ## December 16
@@ -1225,7 +1225,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by all newspapers on December 16th")) + 
      geom_blank()
  
  
@@ -1248,7 +1248,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by UK newspapers on December 16th")) + 
      geom_blank()
  
  
@@ -1271,7 +1271,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by US newspapers on December 16th")) + 
      geom_blank()
  
  
@@ -1296,7 +1296,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Canada newspapers on December 16th")) + 
      geom_blank()
  
  December16_NZ <-headlines_tok %>%
@@ -1318,7 +1318,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by New Zealand newspapers on December 16th")) + 
      geom_blank()
  
  
@@ -1342,7 +1342,7 @@ group_by(word) %>%
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("Top", 20 , "frequently used words")) + 
+     ggtitle(paste("Top", 20 , "frequently used words by Australia newspapers on December 16th")) + 
      geom_blank()
 
 
