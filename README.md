@@ -7,7 +7,6 @@ This repository provides materials for our final data science project for the co
 We aim to answer this question with the following subquestions:
 - How often are certain words used?
 - How long remain certain words included in the headlines?
-- Which emotions are connected to these words (sentiment analysis)?
 - How do the answers to the questions above change per newspaper and per country?
 
 ## Group
