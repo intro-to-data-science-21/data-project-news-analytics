@@ -164,7 +164,7 @@ Alldays$word <- factor(Alldays$word, levels = Alldays$word[order(Alldays$occurre
     coord_flip() +
      theme_minimal() +
    scale_fill_gradient(high = "#f6a97a", low="#ca3c97") +
-     ggtitle(paste("The 20 most frequently used words across the world ")) + 
+     ggtitle(paste("The 20 most frequently used words across the 5 countries ")) + 
      geom_blank()
 
 
