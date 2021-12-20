@@ -10,8 +10,8 @@ We aim to answer this question with the following subquestions:
 - How do the answers to the questions above change per country?
 
 ## Repo
-- In the "Data" folder you can find the headlines that we scriped in the csv. files.
-- The "final-report.rmd" is the rmd file that produces our final report - including all (plotly) figures and text.
+- In the "Data" folder you can find the headlines that we scraped in the csv. files.
+- The "final-report.rmd" is the rmd file that generates our final report - including all (plotly) figures and text.
 - The "master-scraping-script.rmd" contains the code that we used to schedule our scraping.
 
 ## Group
