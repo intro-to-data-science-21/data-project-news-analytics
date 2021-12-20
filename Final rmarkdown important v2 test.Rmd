@@ -1229,7 +1229,7 @@ us <- headlines_tok %>%
   group_by(name) %>% 
   count() %>% 
   arrange(desc(n)) %>% 
-  kable() %>% 
+  kable(col.names = c("Newspapers","Headlines")) %>% 
   kable_styling(bootstrap_options = c("striped", "hover"),
                 full_width = TRUE,
                 position = "center")
@@ -1246,7 +1246,7 @@ uk <- headlines_tok %>%
   group_by(name) %>% 
   count() %>% 
   arrange(desc(n)) %>%  
-  kable() %>% 
+  kable(col.names = c("Newspapers","Headlines")) %>% 
   kable_styling(bootstrap_options = c("striped", "hover"),
                 full_width = TRUE,
                 position = "center")
@@ -1265,7 +1265,7 @@ canada <- headlines_tok %>%
   group_by(name) %>% 
   count() %>% 
   arrange(desc(n)) %>% 
-  kable() %>% 
+  kable(col.names = c("Newspapers","Headlines")) %>% 
   kable_styling(bootstrap_options = c("striped", "hover"),
                 full_width = TRUE,
                 position = "center")
@@ -1284,7 +1284,7 @@ aus <- headlines_tok %>%
   group_by(name) %>% 
   count() %>% 
   arrange(desc(n)) %>% 
-  kable() %>% 
+  kable(col.names = c("Newspapers","Headlines")) %>% 
   kable_styling(bootstrap_options = c("striped", "hover"),
                 full_width = TRUE,
                 position = "center")
@@ -1302,7 +1302,7 @@ nz <- headlines_tok %>%
   group_by(name) %>% 
   count() %>% 
   arrange(desc(n)) %>%  
-  kable() %>% 
+  kable(col.names = c("Newspapers","Headlines")) %>% 
   kable_styling(bootstrap_options = c("striped", "hover"),
                 full_width = TRUE,
                 position = "center")
