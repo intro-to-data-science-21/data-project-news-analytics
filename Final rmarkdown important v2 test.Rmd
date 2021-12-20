@@ -1213,7 +1213,21 @@ group_by(word) %>%
 ```
 
 ##
+
+---
+
+**Executive Summary : ** <br/>
+
+Headlines are extremely important because a good headline attracts readers and can lead them to read the content written below.This makes it necessary to use words in a fashion which makes the headline appealing to the viewer.We attempt to find out how long these words stay in contention during a certain period starting from a time when their usages in headlines were the highest.For this purpose we take a look at newspapers from five different predominantly English speaking countries such as UK,USA,New Zealand,Australia and Canada.Across the different countries we conducted our research it is observed that Covid-19 and its new variant omicron remains a hot topic and stays on the headlines through out the duration of our research.Yet many words that were dominating the headlines at the start of our scraping loses its significance in the days that followed.
+
+---
+
+
+**Introduction : **
+
 It is often said that "breaking news", speculative and sensational headlines characterize the modern 24-hour news cycle. In order to survive today's fast-paced media landscape, outlets need to compete for audiences that subscribe to their platform. Some authors underline the dangers this may pose to trustworthy information and an an informed public debate more generally - and refer to the "menace of media speed and the 24-hour news cycle". ^[Rosenberg, H., & Feldman, C. S. (2008). No Time To Think. Bloomsbury Academic.] If outlets want to survive in the market, they need to compete and attract as many users as possible. The gain for outlets is twofold: if more users subscribe to a platform, this does not just raise revenue in itself, but also makes the platform more attractive to advertisers. 
+
+**Methodology : **
 
 We want to deepen our understanding of the modern news-cycle. In this article, we will research how media headlines develop over time. We chose to focus on the words that are used in the front page headlines of the largest newspapers in the US, UK, Canada, Australia and New-Zealand. We scraped over a million front page headlines between December 9 00:01 CET and December 16 20:00 CET, with a time-interval of four hours. This allows us to observe how often words change between time intervals or days. Through this analysis, we aim to gain more insight the question whether the headlines of the news-cycle are constantly changing - adapting to the latest developments - or like to stay in the news-cycle for a longer period of time.
 
@@ -1312,7 +1326,7 @@ nz <- headlines_tok %>%
 nz
 ```
 
-
+**Observations : **
 
 
 ##### Figure 2: the most used words in all newspapers
@@ -1321,6 +1335,8 @@ nz
 
 
 ## 
+**Observations : **
+
 *Figure 1* provides an overview of the proportions of words that we scraped - relative to each newspaper. Newspapers such as the Dailymail (N = 61856), Mirror (N = 39010) and Telegraph (N = 29548) in the UK, the Globe and Mail in Canada (N = 32523) and the New-Zealand Herald (N = 25838) have the highest share of words in our dataset. This is either due to the fact that some of these newspapers have very long digital front pages or because some newspapers like to use very long headlines (e.g the headlines of the UK Dailymail often consist of four to six sentences). Although we tried to balance our data by truncating the words of these newspapers, they still have a relatively high share of words in our data. Moreover, we deleted the (stop-) words that have no inherent meaning, such as "click", "home" and "the". 
 
 *Figure 2: The usage of words for all day and per days*
@@ -1970,5 +1986,7 @@ ggplotly(graph_nz) %>%
 Until now, we have visualized and discussed the frequency of certain words between December 9 and 15. However, in order to understand how long certain words remain in the news cycle over time, we focus on a range of words - more specifically, the words that were discussed most often at our starting time point, December 9 at 0.01. This is what *figure 3* shows: the "frequency development" of the words that were most present in the headlines on December 9. Looking first at the aggregated data of all countries, we can see that Covid is consistently prevalent in headlines. In our time period, the use of the word Christmas decreases substantially from December 13 onwards. On December 13 at 12.00 CET, the use of the word omikron increases substantially. However, for most words (e.g. "plan", "car", "police"), we observe the following trend: while they are discussed relatively often on the first time point, their use decreases constantly until our last time point. 
 
 However, on a country level, we observe that the UK is the only country that follows the aggregated trend - most likely due to the fact that the headlines of UK newspapers make up a large part of the dataset. In all other four countries, we observe interesting diverging trends. In the US, 6 out of 13 words (booster, death, defense, democrats, health and Putin) lose salience after December 9. In Canada, the use of 13 out of 21 words (Alzheimer's, Beijing, boycott, car, diplmatic, drug, fight, fire, health, hit, investors, money and olympics) decrease substantially after December 9. In Australia, just 2 out of 16 words dissapear from the headlines after December 9: the other 14 words are present relatively constant in the news headlines. In New-Zealand, 13 out of 19 words lose significance in the course of time. 
+
+**Conclusion : **
 
 On the basis of these findings, we can conclude that in the researched time period, the speed or variability of the news-cycle is the highest in the UK, Canada and New-Zealand. In these countries, the topics in the headlines that we identied lost significance relatively quickly - especially in comparison to the US and Australia. In these countries, most words remained  salient over the time course. Apart from these findings, it is important to reiterate that our short time span of seven days is prevents us from seeing the bigger picture. Our data is insufficient to draw  strong conclusions - however, if anything, we can safely say that December 2021 will be remembered for Chrstimas and Covid.
