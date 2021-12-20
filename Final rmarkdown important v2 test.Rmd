@@ -1990,3 +1990,15 @@ However, on a country level, we observe that the UK is the only country that fol
 **Conclusion : **
 
 On the basis of these findings, we can conclude that in the researched time period, the speed or variability of the news-cycle is the highest in the UK, Canada and New-Zealand. In these countries, the topics in the headlines that we identified lost significance relatively quickly - especially in comparison to the US and Australia. In these countries, most words remained  salient over the time course. Apart from these findings, it is important to reiterate that our short time span of seven days is prevents us from seeing the bigger picture. Our data is insufficient to draw  strong conclusions - however, if anything, we can safely say that December 2021 will be remembered for Chrstimas and Covid.
+
+**Contributions : **
+
+
+
+We both were equally involved in brainstorming how we want to present the data we scrape in a convincing manner. This involved deciding on which countries to focus on and the visualisations to choose when we present the data. We had initially divided the work into two where Koen will do the scraping part and Abhiram will work on the visualisations.<br/>
+
+Koen created the function which scraped and cleaned the headlines. He created the line graphs in figure 2 and the table 1 as well.<br/>
+
+ Abhiram created a shiny dashboard initially which would allow users to filter between countries, days and newspaper type to find out the words most used on a particular day in the time period. On further discussions we decided to leave out the dashboard and present the data in a simpler format.(Please find shiny_dashboard.rmd in the project directory).Abhiram created the figure 1.<br/>
+
+Both were involved in the creation of the final document.
