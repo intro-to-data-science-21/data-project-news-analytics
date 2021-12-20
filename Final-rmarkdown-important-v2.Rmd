@@ -140,7 +140,7 @@ headlines_tok <- headlines_tok %>%
 ```
 
 ```{r message = FALSE, warning = FALSE, include = FALSE}
-# ensuring balance -------------------------------------------------------
+# adding a new column to count the words -------------------------------------------------------
 
 Number <-1
 
