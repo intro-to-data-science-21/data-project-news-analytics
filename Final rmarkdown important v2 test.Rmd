@@ -143,7 +143,7 @@ headlines_tok <- headlines %>%
 
 headlines_tok <- headlines_tok %>% 
   filter(!grepl('content|subscriber|read|star|10|9|6|min|l.a|wa|nz|canada|uk|west|tampa|times|2021|2022|home|life
-                |time|top|city|day|people|world|house|win|reveals|revealed|dont|1|amid|live', word))  # dailymail uses the word star everywhore
+                |time|top|city|day|people|world|house|win|reveals|revealed|dont|1|amid|live', word))  # daily mail uses the word star everywhore
 ```
 
 ```{r message = FALSE, warning = FALSE, include = FALSE}
