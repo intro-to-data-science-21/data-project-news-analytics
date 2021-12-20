@@ -7,7 +7,12 @@ This repository provides materials for our final data science project for the co
 We aim to answer this question with the following subquestions:
 - How often are certain words used?
 - How long remain certain words included in the headlines?
-- How do the answers to the questions above change per newspaper and per country?
+- How do the answers to the questions above change per country?
+
+## Repo
+- In the "Data" folder you can find the headlines that we scriped in the csv. files.
+- The "final-report.rmd" is the rmd file that produces our final report - including all (plotly) figures and text.
+- The "master-scraping-script.rmd" contains the code that we used to scheduele our scraping.
 
 ## Group
 - Koen Oosthoek ([website](https://github.com/koenoosthoek))
