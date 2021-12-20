@@ -1999,6 +1999,6 @@ We both were equally involved in brainstorming how we want to present the data w
 
 Koen created the function which scraped and cleaned the headlines. He created the line graphs in figure 2 and the table 1 as well.<br/>
 
- Abhiram created a shiny dashboard initially which would allow users to filter between countries, days and newspaper type to find out the words most used on a particular day in the time period. On further discussions we decided to leave out the dashboard and present the data in a simpler format.(Please find shiny_dashboard.rmd in the project directory).Abhiram created the figure 1.<br/>
+ Abhiram created a shiny dashboard initially which would allow users to filter between countries, days and newspaper type to find out the words most used on a particular day. On further discussions we decided to leave out the dashboard and present the data in a simpler format.(Please find a working dashboard (shiny_dashboard.rmd) in the project directory).Abhiram created the figure 1.<br/>
 
 Both were involved in the creation of the final document.
