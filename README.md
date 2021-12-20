@@ -12,7 +12,7 @@ We aim to answer this question with the following subquestions:
 ## Repo
 - In the "Data" folder you can find the headlines that we scriped in the csv. files.
 - The "final-report.rmd" is the rmd file that produces our final report - including all (plotly) figures and text.
-- The "master-scraping-script.rmd" contains the code that we used to scheduele our scraping.
+- The "master-scraping-script.rmd" contains the code that we used to schedule our scraping.
 
 ## Group
 - Koen Oosthoek ([website](https://github.com/koenoosthoek))
